@@ -1,7 +1,10 @@
+
+
+<%@page import="java.util.Map"%>
 <%@page import="java.util.Iterator"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-   "http://www.w3.org/TR/html4/loose.dtd">
+    "http://www.w3.org/TR/html4/loose.dtd">
 <%@ page import="uk.ac.dundee.computing.aec.sensorweb.stores.*" %>
 <html>
     <head>
@@ -13,7 +16,22 @@
         <h1>Sensors</h1>
     </header>
     <article>
+
         <%
+            DeviceStore Device = (DeviceStore) request.getAttribute("Device");
+
+            if (Device != null) {
+        %>
+        <h2>Device <%=Device.getName()%></h2>
+        <%
+            Map<String, String> meta = Device.getMeta();
+            if (meta != null) {
+                for (Map.Entry<String, String> entry : meta.entrySet()) {
+        %><%=entry.getKey()%>, <%=entry.getValue()%><br><%
+                    }
+                }
+            }
+
             java.util.LinkedList<DeviceStore> Devices = (java.util.LinkedList<DeviceStore>) request.getAttribute("Devices");
             if (Devices == null) {
         %>
@@ -26,11 +44,11 @@
                 DeviceStore p = (DeviceStore) iterator.next();
 
         %>
-         <a href="/SensorWeb/Device/<%=p.getName()%>" ><%=p.getName()%></a><br/><%
+        <a href="/SensorWeb/Device/<%=p.getName()%>" ><%=p.getName()%></a><br/><%
 
-            }
+                }
             }
         %>
     </article>
-    </body>
+</body>
 </html>

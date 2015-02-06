@@ -19,7 +19,7 @@ import uk.ac.dundee.computing.aec.sensorweb.stores.DeviceStore;
  *
  * @author andycobley
  */
-public class Device {
+public class DeviceModel {
     Cluster cluster=null;
     Session session=null;
     public void Device() {
@@ -50,5 +50,25 @@ public class Device {
             }
         }
         return devices;
+    }
+    
+    public DeviceStore getDevice(String DeviceName){
+        DeviceStore dd=null;
+        String DeviceQuery="select * from sensorsync.sensors where name=?";
+        PreparedStatement ps = session.prepare(DeviceQuery);
+        ResultSet rs = null;
+        BoundStatement boundStatement = new BoundStatement(ps);
+        rs = session.execute(boundStatement.bind(java.util.UUID.fromString(DeviceName)));
+        if (rs.isExhausted()) {
+            System.out.println("No Devices");
+            return null;
+        } else {
+            dd= new DeviceStore();
+        for (Row row : rs) {
+             dd.setName(row.getUUID("name"));
+             dd.setMeta(row.getMap("metadata", String.class, String.class));
+        }
+        }
+        return dd;
     }
 }

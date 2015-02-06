@@ -5,6 +5,7 @@
  */
 package uk.ac.dundee.computing.aec.sensorweb.stores;
 
+import java.util.Map;
 import java.util.UUID;
 
 
@@ -15,6 +16,7 @@ import java.util.UUID;
  */
 public class DeviceStore {
     private UUID DeviceName=null;
+    private Map<String,String> meta =null;
     public void Device() {
 
     }
@@ -25,6 +27,14 @@ public class DeviceStore {
     
     public UUID getName(){
         return DeviceName;
+    }
+    
+    public void setMeta(Map meta){
+        this.meta=meta;
+    }
+    
+    public Map getMeta(){
+        return meta;
     }
 
 }

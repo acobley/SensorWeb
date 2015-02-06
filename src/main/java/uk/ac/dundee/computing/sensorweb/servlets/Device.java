@@ -9,7 +9,7 @@ import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.Session;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.List;
+import java.util.HashMap;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -18,6 +18,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import uk.ac.dundee.computing.aec.instagrim.lib.CassandraHosts;
+import uk.ac.dundee.computing.aec.sensorweb.lib.Convertors;
 import uk.ac.dundee.computing.aec.sensorweb.models.DeviceModel;
 import uk.ac.dundee.computing.aec.sensorweb.stores.DeviceStore;
 
@@ -25,21 +26,16 @@ import uk.ac.dundee.computing.aec.sensorweb.stores.DeviceStore;
  *
  * @author andycobley
  */
-@WebServlet(name = "Devices", urlPatterns = {"/Devices"})
-
-
-
-
-public class Devices extends HttpServlet {
-    Cluster cluster;
-    Session session;
-
-    public void init(ServletConfig config) throws ServletException {
+@WebServlet(name = "Device", urlPatterns = {"/Device","/Device/*"})
+public class Device extends HttpServlet {
+    private Cluster cluster=null;
+    private Session session=null;
+    private HashMap CommandsMap = new HashMap();
+public void init(ServletConfig config) throws ServletException {
         // TODO Auto-generated method stub
         cluster = CassandraHosts.getCluster();
         session = cluster.newSession();
     }
-    
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -51,11 +47,16 @@ public class Devices extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        DeviceModel dd = new DeviceModel();
-        dd.setSession(session);
-         List<DeviceStore> devices=dd.getDevices();
-         RequestDispatcher rd = request.getRequestDispatcher("/index.jsp");
-        request.setAttribute("Devices", devices);
+            String args []=Convertors.SplitRequestPath(request);
+            for (int i=0; i<args.length;i++){
+                System.out.println(i+" : "+args[i]);
+            }
+            String Device= args[2];
+            DeviceModel dm= new DeviceModel();
+            dm.setSession(session);
+            DeviceStore dd = dm.getDevice(Device);
+             RequestDispatcher rd = request.getRequestDispatcher("/index.jsp");
+        request.setAttribute("Device", dd);
         rd.forward(request, response);
         
     }
@@ -72,11 +73,22 @@ public class Devices extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        System.out.println("get Command");
         processRequest(request, response);
     }
 
-    
+    /**
+     * Handles the HTTP <code>POST</code> method.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        processRequest(request, response);
+    }
 
     /**
      * Returns a short description of the servlet.
