@@ -28,12 +28,12 @@ public class Device {
 
     public void setSession(Session session) {
         
-        session=cluster.newSession();
+        this.session=session;
     }
     
     public List<DeviceStore> getDevices(){
         List<DeviceStore> devices= new LinkedList<DeviceStore>();
-        String DeviceQuery="select name from sensors";
+        String DeviceQuery="select name from sensorsync.sensors";
         PreparedStatement ps = session.prepare(DeviceQuery);
         ResultSet rs = null;
         BoundStatement boundStatement = new BoundStatement(ps);
@@ -45,6 +45,7 @@ public class Device {
         for (Row row : rs) {
                 DeviceStore dd= new DeviceStore();
                 dd.setName(row.getUUID("name"));
+                System.out.println("Device "+dd.getName());
                 devices.add(dd);
             }
         }

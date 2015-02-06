@@ -54,7 +54,7 @@ public class Devices extends HttpServlet {
         Device dd = new Device();
         dd.setSession(session);
          List<DeviceStore> devices=dd.getDevices();
-         RequestDispatcher rd = request.getRequestDispatcher("/Devices.jsp");
+         RequestDispatcher rd = request.getRequestDispatcher("/index.jsp");
         request.setAttribute("Devices", devices);
         rd.forward(request, response);
         
@@ -72,6 +72,7 @@ public class Devices extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        System.out.println("get Command");
         processRequest(request, response);
     }
 
