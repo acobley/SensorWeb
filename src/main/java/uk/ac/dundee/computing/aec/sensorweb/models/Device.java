@@ -33,7 +33,7 @@ public class Device {
     
     public List<DeviceStore> getDevices(){
         List<DeviceStore> devices= new LinkedList<DeviceStore>();
-        String DeviceQuery="select name from sensorsync.sensors";
+        String DeviceQuery="select distinct name from sensorsync.sensors";
         PreparedStatement ps = session.prepare(DeviceQuery);
         ResultSet rs = null;
         BoundStatement boundStatement = new BoundStatement(ps);
