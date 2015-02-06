@@ -67,6 +67,7 @@ public class DeviceModel {
         for (Row row : rs) {
              dd.setName(row.getUUID("name"));
              dd.setMeta(row.getMap("metadata", String.class, String.class));
+             dd.addDate(row.getDate("insertion_time"));
         }
         }
         return dd;

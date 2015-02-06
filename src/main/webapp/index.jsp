@@ -1,5 +1,7 @@
 
 
+<%@page import="java.util.Date"%>
+<%@page import="java.util.List"%>
 <%@page import="java.util.Map"%>
 <%@page import="java.util.Iterator"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
@@ -30,6 +32,16 @@
         %><%=entry.getKey()%>, <%=entry.getValue()%><br><%
                     }
                 }
+            }
+
+            List<Date> dates = Device.getDates();
+            if (dates != null) {
+                Iterator<Date> it = dates.iterator();
+                while (it.hasNext()) {
+                    Date dd = it.next();
+        %>
+        <a href="/SensorWeb/Device/<%=Device.getName()%>/<%=dd%>"><%=dd%></a>
+        <%}
             }
 
             java.util.LinkedList<DeviceStore> Devices = (java.util.LinkedList<DeviceStore>) request.getAttribute("Devices");
