@@ -30,7 +30,6 @@
             if (meta != null) {
                 for (Map.Entry<String, String> entry : meta.entrySet()) {
         %><%=entry.getKey()%>, <%=entry.getValue()%><br><%
-                    }
                 }
             }
 
@@ -40,11 +39,12 @@
                 while (it.hasNext()) {
                     Date dd = it.next();
         %>
-        <a href="/SensorWeb/Device/<%=Device.getName()%>/<%=dd%>"><%=dd%></a>
+        <a href="/SensorWeb/Device/<%=Device.getName()%>/<%=dd%>"><%=dd%></a><br>
         <%}
+                }
             }
-
             java.util.LinkedList<DeviceStore> Devices = (java.util.LinkedList<DeviceStore>) request.getAttribute("Devices");
+
             if (Devices == null) {
         %>
         <p>No Devices found</p>
