@@ -5,7 +5,9 @@
  */
 package uk.ac.dundee.computing.aec.sensorweb.stores;
 
+import com.datastax.driver.core.UDTValue;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -21,6 +23,7 @@ public class DeviceStore {
     private UUID DeviceName=null;
     private Map<String,String> meta =null;
     private List<Date> dates = null;
+    Map<String, UDTValue> sensorMap = null;
     public void Device() {
 
     }
@@ -37,8 +40,17 @@ public class DeviceStore {
         this.meta=meta;
     }
     
+    public void setSensors(Map Sensors){
+        sensorMap=Sensors; 
+        
+    }
+    
     public Map getMeta(){
         return meta;
+    }
+    
+    public Map getSensors(){
+        return sensorMap;
     }
     
     public void addDate(Date dd){

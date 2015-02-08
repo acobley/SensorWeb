@@ -26,16 +26,19 @@ import uk.ac.dundee.computing.aec.sensorweb.stores.DeviceStore;
  *
  * @author andycobley
  */
-@WebServlet(name = "Device", urlPatterns = {"/Device","/Device/*"})
+@WebServlet(name = "Device", urlPatterns = {"/Device", "/Device/*"})
 public class Device extends HttpServlet {
-    private Cluster cluster=null;
-    private Session session=null;
+
+    private Cluster cluster = null;
+    private Session session = null;
     private HashMap CommandsMap = new HashMap();
-public void init(ServletConfig config) throws ServletException {
+
+    public void init(ServletConfig config) throws ServletException {
         // TODO Auto-generated method stub
         cluster = CassandraHosts.getCluster();
         session = cluster.newSession();
     }
+
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -47,18 +50,28 @@ public void init(ServletConfig config) throws ServletException {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-            String args []=Convertors.SplitRequestPath(request);
-            for (int i=0; i<args.length;i++){
-                System.out.println(i+" : "+args[i]);
-            }
-            String Device= args[2];
-            DeviceModel dm= new DeviceModel();
+        String args[] = Convertors.SplitRequestPath(request);
+        for (int i = 0; i < args.length; i++) {
+            System.out.println(i + " : " + args[i]);
+        }
+        String Device = args[2];
+        if (Device != null) {
+            DeviceModel dm = new DeviceModel();
             dm.setSession(session);
-            DeviceStore dd = dm.getDevice(Device);
-             RequestDispatcher rd = request.getRequestDispatcher("/index.jsp");
-        request.setAttribute("Device", dd);
-        rd.forward(request, response);
-        
+            DeviceStore dd=null;
+            if (args[3]==null)
+                dd= dm.getDevice(Device);
+            else
+                dd=dm.getDevice(Device,args[3]);
+            RequestDispatcher rd = request.getRequestDispatcher("/index.jsp");
+            request.setAttribute("Device", dd);
+            rd.forward(request, response);
+        } else {
+            RequestDispatcher rd = request.getRequestDispatcher("/index.jsp");
+
+            rd.forward(request, response);
+        }
+
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
