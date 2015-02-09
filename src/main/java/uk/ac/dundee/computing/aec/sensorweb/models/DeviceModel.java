@@ -92,6 +92,7 @@ public class DeviceModel {
         } else {
             
             dd = new DeviceStore();
+            dd.setReadingType(SensorReadingType);
             for (Row row : rs) {
                 dd.setName(row.getUUID("name"));
                 dd.setMeta(row.getMap("metadata", String.class, String.class));

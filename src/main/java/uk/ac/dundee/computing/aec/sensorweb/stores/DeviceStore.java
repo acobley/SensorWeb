@@ -6,8 +6,10 @@
 package uk.ac.dundee.computing.aec.sensorweb.stores;
 
 import com.datastax.driver.core.UDTValue;
+import com.datastax.driver.core.UserType;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -24,10 +26,12 @@ public class DeviceStore {
     private Map<String,String> meta =null;
     private List<Date> dates = null;
     Map<String, UDTValue> sensorMap = null;
+    UserType SensorReadingType = null;
     public void Device() {
 
     }
     
+   
     public void setName(UUID Name){
         DeviceName=Name;
     }
@@ -45,6 +49,14 @@ public class DeviceStore {
         
     }
     
+    
+    public void setReadingType(UserType SensorReadingType){
+        this.SensorReadingType=SensorReadingType;
+    }
+    
+    public UserType getreadingType(){
+        return SensorReadingType;
+    }
     public Map getMeta(){
         return meta;
     }
@@ -53,6 +65,8 @@ public class DeviceStore {
         return sensorMap;
     }
     
+    
+
     public void addDate(Date dd){
         if (dates == null){
             dates = new LinkedList<Date>();

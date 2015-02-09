@@ -58,11 +58,14 @@ public class Device extends HttpServlet {
         if (Device != null) {
             DeviceModel dm = new DeviceModel();
             dm.setSession(session);
-            DeviceStore dd=null;
-            if (args[3]==null)
-                dd= dm.getDevice(Device);
-            else
-                dd=dm.getDevice(Device,args[3]);
+            DeviceStore dd = null;
+            int la=args.length;
+            if (la==4) {
+                dd = dm.getDevice(Device, args[3]);
+            } else {
+                
+                dd = dm.getDevice(Device);
+            }
             RequestDispatcher rd = request.getRequestDispatcher("/index.jsp");
             request.setAttribute("Device", dd);
             rd.forward(request, response);

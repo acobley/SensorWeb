@@ -1,5 +1,7 @@
 
 
+<%@page import="com.datastax.driver.core.UserType"%>
+<%@page import="com.datastax.driver.core.UDTValue"%>
 <%@page import="java.util.Date"%>
 <%@page import="java.util.List"%>
 <%@page import="java.util.Map"%>
@@ -15,7 +17,7 @@
     </head>
     <body>
     <header>
-        <h1>Sensors</h1>
+        <h1><a href="/SensorWeb/Devices">Sensors</a></h1>
     </header>
     <article>
 
@@ -24,7 +26,7 @@
 
             if (Device != null) {
         %>
-        <h2>Device <%=Device.getName()%></h2>
+        <h2>Device <a href="/SensorWeb/Device/<%=Device.getName()%>"><%=Device.getName()%></a></h2>
         <%
             Map<String, String> meta = Device.getMeta();
             if (meta != null) {
@@ -42,12 +44,25 @@
         <a href="/SensorWeb/Device/<%=Device.getName()%>/<%=dd%>"><%=dd%></a><br>
         <%}
                 }
+            Device.getSensors();
+            Map<String, UDTValue> sensorMap = Device.getSensors();
+            if (sensorMap != null){
+                //UserType SensorReadingType=Device.getreadingType();
+                for (Map.Entry<String, UDTValue> entry : sensorMap.entrySet()) {
+        %><%=entry.getKey()%>, 
+        <%
+             UDTValue sensor= entry.getValue();%>
+             <%=sensor.getFloat("fValue")%>,
+             <%=sensor.getInt("iValue")%>,
+             <%=sensor.getString("sValue")%><br>
+             <%   }
+            }
             }
             java.util.LinkedList<DeviceStore> Devices = (java.util.LinkedList<DeviceStore>) request.getAttribute("Devices");
 
             if (Devices == null) {
         %>
-        <p>No Devices found</p>
+        
         <%
         } else {
             Iterator<DeviceStore> iterator;
