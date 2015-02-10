@@ -51,10 +51,18 @@
                 for (Map.Entry<String, UDTValue> entry : sensorMap.entrySet()) {
         %><%=entry.getKey()%>, 
         <%
-             UDTValue sensor= entry.getValue();%>
+             UDTValue sensor= entry.getValue();
+             float fValue=sensor.getFloat("fValue");
+             int iValue=sensor.getInt("iValue");
+             String sValue=sensor.getString("sValue");
+             if (fValue !=0){%>
              <%=sensor.getFloat("fValue")%>,
+             <%}if (iValue !=0){%>
              <%=sensor.getInt("iValue")%>,
-             <%=sensor.getString("sValue")%><br>
+              <%}if (sValue !=null){%>
+             <%=sensor.getString("sValue")%>
+             <%}%>
+             <br>
              <%   }
             }
             }
