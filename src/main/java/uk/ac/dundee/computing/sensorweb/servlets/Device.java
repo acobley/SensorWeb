@@ -63,7 +63,7 @@ public class Device extends HttpServlet {
                 }
             }
         }
-        
+
         for (int i = 0; i < args.length; i++) {
             System.out.println(i + " : " + args[i]);
         }
@@ -74,10 +74,10 @@ public class Device extends HttpServlet {
             DeviceStore dd = null;
             int la = args.length;
             //This really needs rewritten !
-            if (la == 4) {
-                if (CommandsMap.containsKey(args[3])==false) {
-                dd = dm.getDevice(Device, args[3]);
-                }else{
+            if (la >= 4) {
+                if (CommandsMap.containsKey(args[3]) == false) {
+                    dd = dm.getDevice(Device, args[3]);
+                } else {
                     dd = dm.getDevice(Device);
                 }
             } else {
