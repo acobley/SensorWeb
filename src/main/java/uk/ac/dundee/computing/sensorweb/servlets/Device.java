@@ -37,6 +37,7 @@ public class Device extends HttpServlet {
         // TODO Auto-generated method stub
         cluster = CassandraHosts.getCluster();
         session = cluster.newSession();
+        CommandsMap.put("JSON", 1);
     }
 
     /**
@@ -51,6 +52,18 @@ public class Device extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String args[] = Convertors.SplitRequestPath(request);
+        //check for JSON request
+        boolean RenderJSON = false;
+        for (int i = 0; i < args.length; i++) {
+            System.out.println(i + " : " + args[i]);
+            int Command = -1;
+            if (CommandsMap.containsKey(args[i])) {
+                if ((Integer) CommandsMap.get(args[i]) == 1) {
+                    RenderJSON = true;
+                }
+            }
+        }
+        
         for (int i = 0; i < args.length; i++) {
             System.out.println(i + " : " + args[i]);
         }
@@ -59,16 +72,29 @@ public class Device extends HttpServlet {
             DeviceModel dm = new DeviceModel();
             dm.setSession(session);
             DeviceStore dd = null;
-            int la=args.length;
-            if (la==4) {
+            int la = args.length;
+            //This really needs rewritten !
+            if (la == 4) {
+                if (CommandsMap.containsKey(args[3])==false) {
                 dd = dm.getDevice(Device, args[3]);
+                }else{
+                    dd = dm.getDevice(Device);
+                }
             } else {
-                
+
                 dd = dm.getDevice(Device);
             }
-            RequestDispatcher rd = request.getRequestDispatcher("/index.jsp");
-            request.setAttribute("Device", dd);
-            rd.forward(request, response);
+
+            if (RenderJSON == true) {
+                request.setAttribute("Data", dd);
+                RequestDispatcher rdjson = request.getRequestDispatcher("/RenderJson");
+                rdjson.forward(request, response);
+            } else {
+
+                RequestDispatcher rd = request.getRequestDispatcher("/index.jsp");
+                request.setAttribute("Device", dd);
+                rd.forward(request, response);
+            }
         } else {
             RequestDispatcher rd = request.getRequestDispatcher("/index.jsp");
 
