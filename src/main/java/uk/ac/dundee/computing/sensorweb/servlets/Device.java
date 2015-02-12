@@ -75,11 +75,9 @@ public class Device extends HttpServlet {
             int la = args.length;
             //This really needs rewritten !
             if (la >= 4) {
-                if (CommandsMap.containsKey(args[3]) == false) {
+                
                     dd = dm.getDevice(Device, args[3]);
-                } else {
-                    dd = dm.getDevice(Device);
-                }
+
             } else {
 
                 dd = dm.getDevice(Device);
