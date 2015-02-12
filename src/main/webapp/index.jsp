@@ -44,8 +44,8 @@
         <a href="/SensorWeb/Device/<%=Device.getName()%>/<%=dd%>"><%=dd%></a><br>
         <%}
                 }
-            Device.getSensors();
-            Map<String, UDTValue> sensorMap = Device.getSensors();
+            
+            Map<String, UDTValue> sensorMap = Device.gtSensors();
             if (sensorMap != null){
                 //UserType SensorReadingType=Device.getreadingType();
                 for (Map.Entry<String, UDTValue> entry : sensorMap.entrySet()) {
