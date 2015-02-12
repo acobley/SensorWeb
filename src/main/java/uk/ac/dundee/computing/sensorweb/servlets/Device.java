@@ -74,7 +74,7 @@ public class Device extends HttpServlet {
             DeviceStore dd = null;
             int la = args.length;
             //This really needs rewritten !
-            if (la >= 4) {
+            if (la == 4) {
                 
                     dd = dm.getDevice(Device, args[3]);
 
