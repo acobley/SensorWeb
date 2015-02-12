@@ -9,6 +9,7 @@ import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.Session;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Arrays;
 import java.util.HashMap;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletConfig;
@@ -52,18 +53,17 @@ public class Device extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String args[] = Convertors.SplitRequestPath(request);
-        //check for JSON request
+        //check for JSON request  which must be the last in the path
         boolean RenderJSON = false;
-        for (int i = 0; i < args.length; i++) {
-            System.out.println(i + " : " + args[i]);
-            int Command = -1;
-            if (CommandsMap.containsKey(args[i])) {
-                if ((Integer) CommandsMap.get(args[i]) == 1) {
-                    RenderJSON = true;
-                }
+
+        if (CommandsMap.containsKey(args[args.length - 1])) {
+            if ((Integer) CommandsMap.get(args[args.length - 1]) == 1) {
+                //Remove the JSON
+                args = Arrays.copyOf(args, args.length - 1);
+                RenderJSON = true;
             }
         }
-        
+
         for (int i = 0; i < args.length; i++) {
             System.out.println(i + " : " + args[i]);
         }
@@ -75,11 +75,9 @@ public class Device extends HttpServlet {
             int la = args.length;
             //This really needs rewritten !
             if (la == 4) {
-                if (CommandsMap.containsKey(args[3])==false) {
-                dd = dm.getDevice(Device, args[3]);
-                }else{
-                    dd = dm.getDevice(Device);
-                }
+                
+                    dd = dm.getDevice(Device, args[3]);
+                
             } else {
 
                 dd = dm.getDevice(Device);
