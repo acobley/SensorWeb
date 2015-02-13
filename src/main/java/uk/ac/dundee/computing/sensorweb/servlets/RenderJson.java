@@ -97,6 +97,8 @@ public class RenderJson extends HttpServlet {
 	                 Method meth = c.getMethod(mName, partypes);
 	                
 	                 Object rt= meth.invoke(Value);
+                         Class cl = rt.getClass();
+                           String className=cl.getName();
 	                 if (rt!=null){
 	                	 System.out.println(Name+" Return "+ rt);
 	                	 try{

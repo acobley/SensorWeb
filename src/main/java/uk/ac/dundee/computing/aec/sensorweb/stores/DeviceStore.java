@@ -58,7 +58,7 @@ public class DeviceStore {
         this.SensorReadingType=SensorReadingType;
     }
     
-    public UserType getreadingType(){
+    public UserType gtreadingType(){
         return SensorReadingType;
     }
     public Map getMeta(){
