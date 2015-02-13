@@ -7,18 +7,30 @@
 <%@page import="java.util.Map"%>
 <%@page import="java.util.Iterator"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-    "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html>
 <%@ page import="uk.ac.dundee.computing.aec.sensorweb.stores.*" %>
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>Sensor Web</title>
+        <link rel="stylesheet" type="text/css" href="/SensorWeb/Styles.css" />
     </head>
     <body>
     <header>
         <h1><a href="/SensorWeb/Devices">Sensors</a></h1>
     </header>
+    <nav>
+        <%
+            String PATH=null;
+        if (request.getAttribute("Path")!=null){
+        PATH=request.getAttribute("Path").toString();
+        }
+        if (PATH !=null){%>
+        <a href="<%=PATH%>/JSON">Get json for this page</a>
+        <%
+        }
+        %>
+    </nav>
     <article>
 
         <%

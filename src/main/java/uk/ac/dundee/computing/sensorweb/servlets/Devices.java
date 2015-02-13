@@ -75,6 +75,7 @@ public class Devices extends HttpServlet {
             rdjson.forward(request, response);
         } else {
             request.setAttribute("Devices", devices);
+            request.setAttribute("Path", request.getRequestURI());
             RequestDispatcher rd = request.getRequestDispatcher("/index.jsp");
 
             rd.forward(request, response);

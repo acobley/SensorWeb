@@ -91,11 +91,12 @@ public class Device extends HttpServlet {
 
                 RequestDispatcher rd = request.getRequestDispatcher("/index.jsp");
                 request.setAttribute("Device", dd);
+                request.setAttribute("Path", request.getRequestURI());
                 rd.forward(request, response);
             }
         } else {
             RequestDispatcher rd = request.getRequestDispatcher("/index.jsp");
-
+request.setAttribute("Path", request.getRequestURI());
             rd.forward(request, response);
         }
 
