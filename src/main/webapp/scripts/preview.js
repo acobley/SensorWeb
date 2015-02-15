@@ -44,13 +44,14 @@ function OnMouseIn(elem) {
         
         var sensors=data["SensorList"];
         if (sensors!=null){
+            $("#preview").append("<h3>Sensor Readings</h3>");
             for (i in sensors){
                 for (k in sensors[i]){
                     j=sensors[i][k];
                     for (l in j){
                         t=j[l];
                     }
-                    $("#preview").append(k + " : " + j + "<br>");
+                    $("#preview").append(k+" : "+l + " : " + t + "<br>");
                 }
                
             
