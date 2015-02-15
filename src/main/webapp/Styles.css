@@ -14,3 +14,10 @@ nav {
     border: 2px;
     float: right;
 }
+
+.preview{
+    text-align: left;
+    border: 2px;
+    border-color: black;
+    float: right;
+}

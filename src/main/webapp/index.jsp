@@ -14,10 +14,13 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>Sensor Web</title>
         <link rel="stylesheet" type="text/css" href="/SensorWeb/Styles.css" />
+        <script type="text/javascript" src="http://code.jquery.com/jquery-2.1.3.min.js"></script>
+        <script type="text/javascript" src="/SensorWeb/scripts/preview.js"></script>
+
     </head>
     <body>
     <header>
-        <h1><a href="/SensorWeb/Devices">Sensors</a></h1>
+        <h1><a href="/SensorWeb/Devices" onmouseover="OnHeadingIn (this)">Sensors</a></h1>
     </header>
     <nav>
         <%
@@ -27,9 +30,18 @@
         }
         if (PATH !=null){%>
         <a href="<%=PATH%>/JSON">Get json for this page</a>
+        <script>
+            $(function () {
+    setPath("<%=PATH%>");	
+});
+
+        </script>
         <%
         }
         %>
+        
+        <div id="preview">
+        </div>
     </nav>
     <article>
 
@@ -38,7 +50,7 @@
 
             if (Device != null) {
         %>
-        <h2>Device <a href="/SensorWeb/Device/<%=Device.getName()%>"><%=Device.getName()%></a></h2>
+        <h2>Device <a href="/SensorWeb/Device/<%=Device.getName()%>"   ><%=Device.getName()%></a></h2>
         <%
             Map<String, String> meta = Device.getMeta();
             if (meta != null) {
@@ -53,7 +65,7 @@
                 while (it.hasNext()) {
                     Date dd = it.next();
         %>
-        <a href="/SensorWeb/Device/<%=Device.getName()%>/<%=dd%>"><%=dd%></a><br>
+        <a href="/SensorWeb/Device/<%=Device.getName()%>/<%=dd%>" onmouseover="OnMouseIn (this)" onmouseout="OnMouseOut (this)"><%=dd%></a><br>
         <%}
                 }
             
@@ -91,7 +103,7 @@
                 DeviceStore p = (DeviceStore) iterator.next();
 
         %>
-        <a href="/SensorWeb/Device/<%=p.getName()%>" ><%=p.getName()%></a><br/><%
+        <a href="/SensorWeb/Device/<%=p.getName()%>" onmouseover="OnMouseIn (this)" onmouseout="OnMouseOut (this)"><%=p.getName()%></a><br/><%
 
                 }
             }
