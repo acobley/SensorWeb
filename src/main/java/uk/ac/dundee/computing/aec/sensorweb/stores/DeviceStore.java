@@ -9,7 +9,7 @@ import com.datastax.driver.core.UDTValue;
 import com.datastax.driver.core.UserType;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
+
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -54,13 +54,9 @@ public class DeviceStore {
     }
     
     
-    public void setReadingType(UserType SensorReadingType){
-        this.SensorReadingType=SensorReadingType;
-    }
+ 
     
-    public UserType gtreadingType(){
-        return SensorReadingType;
-    }
+
     public Map getMeta(){
         return meta;
     }
