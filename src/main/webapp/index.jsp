@@ -42,6 +42,12 @@
         
         <div id="preview">
         </div>
+        <div>
+            <button name="newUUID"  onclick="newUUID()" >New UUID</button>
+        </div>
+        <div id="UUID">
+            
+        </div>
     </nav>
     <article>
 

@@ -5,7 +5,14 @@
  */
 var path = "/SensorWeb/Devices";
 
-
+function newUUID(){
+    $("#UUID").empty();
+     $.getJSON("/SensorWeb/UUID", function (data)
+    {
+        var uuid=data["UUID"];
+        $("#UUID").append("<p>"+uuid+"</p>");
+    });
+}
 
 function setPath(PATH) {
     path = PATH;
