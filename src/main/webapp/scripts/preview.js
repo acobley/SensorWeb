@@ -11,6 +11,7 @@ function newUUID(){
     {
         var uuid=data["UUID"];
         $("#UUID").append("<p>"+uuid+"</p>");
+        $("#UUID").css(border,"2px solid blue");
     });
 }
 

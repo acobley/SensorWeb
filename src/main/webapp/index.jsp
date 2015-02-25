@@ -42,7 +42,7 @@
         
         <div id="preview">
         </div>
-        <div>
+        <div id="uuidbutton">
             <button name="newUUID"  onclick="newUUID()" >New UUID</button>
         </div>
         <div id="UUID">

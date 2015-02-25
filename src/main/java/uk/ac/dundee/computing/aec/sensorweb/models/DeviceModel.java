@@ -60,7 +60,7 @@ public class DeviceModel {
 
     public DeviceStore getDevice(String DeviceName) {
         DeviceStore dd = null;
-        String DeviceQuery = "select * from sensorsync.sensors where name=?";
+        String DeviceQuery = "select * from sensorsync.sensors where name=? limit 100";
         PreparedStatement ps = session.prepare(DeviceQuery);
         ResultSet rs = null;
         BoundStatement boundStatement = new BoundStatement(ps);

@@ -15,9 +15,19 @@ nav {
     float: right;
 }
 
-.preview{
+#preview{
     text-align: left;
     border: 2px;
     border-color: black;
+    float: right;
+}
+
+
+#UUID {
+    text-align: left;
+    border: 2px;
+    border-style: none;
+    border-color: black;
+    padding: 5px;
     float: right;
 }
