@@ -51,8 +51,12 @@
         </div>
     </nav>
     <article>
-
         <%
+        String Path=(String)request.getAttribute("Path");
+        boolean isRange=false;
+        if (Path.contains("Range")){
+            isRange=true;
+        }
             DeviceStore Device = (DeviceStore) request.getAttribute("Device");
 
             if (Device != null) {
@@ -71,9 +75,13 @@
                 Iterator<Date> it = dates.iterator();
                 while (it.hasNext()) {
                     Date dd = it.next();
+                    if (isRange==false){
         %>
+        
         <a href="/SensorWeb/Range/<%=Device.getName()%>/<%=dd%>" onmouseover="OnMouseIn (this)" onmouseout="OnMouseOut (this)">>> </a>
- 
+        <% }else{ %>
+               <a href="<%=Path%>/<%=dd%>" onmouseover="OnMouseIn (this)" onmouseout="OnMouseOut (this)"><<< </a>
+        <% } %>
         <a href="/SensorWeb/Device/<%=Device.getName()%>/<%=dd%>" onmouseover="OnMouseIn (this)" onmouseout="OnMouseOut (this)"><%=dd%></a><br>
         <%}
                 }
