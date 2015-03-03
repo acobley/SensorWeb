@@ -103,4 +103,53 @@ public class DeviceModel {
         }
         return dd;
     }
+    
+    public DeviceStore getDeviceRange(String DeviceName, String InsertionTime) {
+        DeviceStore dd = null;
+        String DeviceQuery = "select * from sensorsync.sensors where name=? and insertion_time>=? order by insertion_time desc";
+        PreparedStatement ps = session.prepare(DeviceQuery);
+        ResultSet rs = null;
+        BoundStatement boundStatement = new BoundStatement(ps);
+        rs = session.execute(boundStatement.bind(java.util.UUID.fromString(DeviceName), new Date(InsertionTime)));
+        if (rs.isExhausted()) {
+            System.out.println("No Devices");
+            return null;
+        } else {
+            
+            dd = new DeviceStore();
+            //dd.setReadingType(SensorReadingType);
+            for (Row row : rs) {
+                dd.setName(row.getUUID("name"));
+                dd.setMeta(row.getMap("metadata", String.class, String.class));
+                dd.addDate(row.getDate("insertion_time"));
+                //http://www.datastax.com/documentation/developer/java-driver/2.1/java-driver/reference/udtApi.html
+                dd.setSensors(row.getMap("reading",String.class, UDTValue.class));
+            }
+        }
+        return dd;
+    }
+    public DeviceStore getDeviceRange(String DeviceName, String StartDate, String EndDate) {
+        DeviceStore dd = null;
+        String DeviceQuery = "select * from sensorsync.sensors where name=? and insertion_time>? and insertion_time<? order by insertion_time desc";
+        PreparedStatement ps = session.prepare(DeviceQuery);
+        ResultSet rs = null;
+        BoundStatement boundStatement = new BoundStatement(ps);
+        rs = session.execute(boundStatement.bind(java.util.UUID.fromString(DeviceName), new Date(StartDate), new Date(EndDate)));
+        if (rs.isExhausted()) {
+            System.out.println("No Devices");
+            return null;
+        } else {
+            
+            dd = new DeviceStore();
+            //dd.setReadingType(SensorReadingType);
+            for (Row row : rs) {
+                dd.setName(row.getUUID("name"));
+                dd.setMeta(row.getMap("metadata", String.class, String.class));
+                dd.addDate(row.getDate("insertion_time"));
+                //http://www.datastax.com/documentation/developer/java-driver/2.1/java-driver/reference/udtApi.html
+                dd.setSensors(row.getMap("reading",String.class, UDTValue.class));
+            }
+        }
+        return dd;
+    }
 }

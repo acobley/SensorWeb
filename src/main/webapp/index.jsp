@@ -72,6 +72,8 @@
                 while (it.hasNext()) {
                     Date dd = it.next();
         %>
+        <a href="/SensorWeb/Range/<%=Device.getName()%>/<%=dd%>" onmouseover="OnMouseIn (this)" onmouseout="OnMouseOut (this)">>> </a>
+ 
         <a href="/SensorWeb/Device/<%=Device.getName()%>/<%=dd%>" onmouseover="OnMouseIn (this)" onmouseout="OnMouseOut (this)"><%=dd%></a><br>
         <%}
                 }

@@ -5,13 +5,23 @@
  */
 package uk.ac.dundee.computing.sensorweb.servlets;
 
+import com.datastax.driver.core.Cluster;
+import com.datastax.driver.core.Session;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Arrays;
+import java.util.HashMap;
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import uk.ac.dundee.computing.aec.instagrim.lib.CassandraHosts;
+import uk.ac.dundee.computing.aec.sensorweb.lib.Convertors;
+import uk.ac.dundee.computing.aec.sensorweb.models.DeviceModel;
+import uk.ac.dundee.computing.aec.sensorweb.stores.DeviceStore;
 
 /**
  *
@@ -19,6 +29,17 @@ import javax.servlet.http.HttpServletResponse;
  */
 @WebServlet(name = "Range", urlPatterns = {"/Range/*"})
 public class Range extends HttpServlet {
+
+    private Cluster cluster = null;
+    private Session session = null;
+    private HashMap CommandsMap = new HashMap();
+
+    public void init(ServletConfig config) throws ServletException {
+        // TODO Auto-generated method stub
+        cluster = CassandraHosts.getCluster();
+        session = cluster.newSession();
+        CommandsMap.put("JSON", 1);
+    }
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -31,21 +52,52 @@ public class Range extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        PrintWriter out = response.getWriter();
-        try {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet Range</title>");            
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet Range at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
-        } finally {
-            out.close();
+        boolean RenderJSON = false;
+        String args[] = Convertors.SplitRequestPath(request);
+        if (CommandsMap.containsKey(args[args.length - 1])) {
+            if ((Integer) CommandsMap.get(args[args.length - 1]) == 1) {
+                //Remove the JSON
+                args = Arrays.copyOf(args, args.length - 1);
+                RenderJSON = true;
+            }
+        }
+
+        for (int i = 0; i < args.length; i++) {
+            System.out.println(i + " : " + args[i]);
+        }
+        String Device = args[2];
+        if (Device != null) {
+            DeviceModel dm = new DeviceModel();
+            dm.setSession(session);
+            DeviceStore dd = null;
+            int la = args.length;
+            //This really needs rewritten !
+            if (la ==5){
+                   dd = dm.getDeviceRange(Device, args[3], args[4]);
+            } else if (la == 4) {
+                
+                    dd = dm.getDeviceRange(Device, args[3]);
+
+            } else {
+
+                dd = dm.getDevice(Device);
+            }
+
+            if (RenderJSON == true) {
+                request.setAttribute("Data", dd);
+                RequestDispatcher rdjson = request.getRequestDispatcher("/RenderJson");
+                rdjson.forward(request, response);
+            } else {
+
+                RequestDispatcher rd = request.getRequestDispatcher("/index.jsp");
+                request.setAttribute("Device", dd);
+                request.setAttribute("Path", request.getRequestURI());
+                rd.forward(request, response);
+            }
+        } else {
+            RequestDispatcher rd = request.getRequestDispatcher("/index.jsp");
+            request.setAttribute("Path", request.getRequestURI());
+            rd.forward(request, response);
         }
     }
 
