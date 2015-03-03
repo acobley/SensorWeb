@@ -104,6 +104,7 @@ public class DeviceModel {
         return dd;
     }
     
+    //get readings for a date > than Insertion Time
     public DeviceStore getDeviceRange(String DeviceName, String InsertionTime) {
         DeviceStore dd = null;
         String DeviceQuery = "select * from sensorsync.sensors where name=? and insertion_time>=? order by insertion_time desc";
