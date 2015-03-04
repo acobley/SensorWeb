@@ -22,6 +22,7 @@
     <header>
         <h1><a href="/SensorWeb/Devices" onmouseover="OnHeadingIn (this)">Sensors</a></h1>
         <h2>V1.0 (Master/Origin) </h2>
+        <h3>Minor 0.1</h3>
     </header>
     <nav>
         <%
