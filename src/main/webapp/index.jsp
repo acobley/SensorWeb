@@ -55,8 +55,10 @@
         <%
         String Path=(String)request.getAttribute("Path");
         boolean isRange=false;
+        if (Path!=null){
         if (Path.contains("Range")){
             isRange=true;
+        }
         }
             DeviceStore Device = (DeviceStore) request.getAttribute("Device");
 
