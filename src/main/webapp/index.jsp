@@ -19,115 +19,115 @@
 
     </head>
     <body>
-    <header>
-        <h1><a href="/SensorWeb/Devices" onmouseover="OnHeadingIn (this)">Sensors</a></h1>
-        <h2>V1.0</h2>
-        <h3>Range Slice</h3>
-    </header>
-    <nav>
-        <%
-            String PATH=null;
-        if (request.getAttribute("Path")!=null){
-        PATH=request.getAttribute("Path").toString();
-        }
-        if (PATH !=null){%>
-        <a href="<%=PATH%>/JSON">Get json for this page</a>
-        <script>
-            $(function () {
-    setPath("<%=PATH%>");	
-});
+        <header>
+            <h1><a href="/SensorWeb/Devices" onmouseover="OnHeadingIn(this)">Sensors</a></h1>
+            <h2>V1.0</h2>
+            <h3>Range Slice</h3>
+        </header>
+        <nav>
+            <%
+                String PATH=null;
+            if (request.getAttribute("Path")!=null){
+            PATH=request.getAttribute("Path").toString();
+            }
+            if (PATH !=null){%>
+            <a href="<%=PATH%>/JSON">Get json for this page</a>
+            <script>
+                $(function () {
+                    setPath("<%=PATH%>");
+                });
 
-        </script>
-        <%
-        }
-        %>
-        
-        <div id="preview">
-        </div>
-        <div id="uuidbutton">
-            <button name="newUUID"  onclick="newUUID()" >New UUID</button>
-        </div>
-        <div id="UUID">
+            </script>
+            <%
+            }
+            %>
+
+            <div id="preview">
+            </div>
+            <div id="uuidbutton">
+                <button name="newUUID"  onclick="newUUID()" >New UUID</button>
+            </div>
+            <div id="UUID">
+
+            </div>
+        </nav>
+        <article>
+            <%
+            String Path=(String)request.getAttribute("Path");
+            boolean isRange=false;
+            if (Path!=null){
+            if (Path.contains("Range")){
+                isRange=true;
+            }
+            }
+                DeviceStore Device = (DeviceStore) request.getAttribute("Device");
+
+                if (Device != null) {
+            %>
+            <h2>Device <a href="/SensorWeb/Device/<%=Device.getName()%>"   ><%=Device.getName()%></a></h2>
+                <%
+                    Map<String, String> meta = Device.getMeta();
+                    if (meta != null) {
+                        for (Map.Entry<String, String> entry : meta.entrySet()) {
+                %><%=entry.getKey()%>, <%=entry.getValue()%><br><%
+                        }
+                    }
+
+                    List<Date> dates = Device.getDates();
+                    if (dates != null) {
+                        Iterator<Date> it = dates.iterator();
+                        while (it.hasNext()) {
+                            Date dd = it.next();
+                            if (isRange==false){
+            %>
+
+            <a href="/SensorWeb/Range/<%=Device.getName()%>/<%=dd%>" onmouseover="OnMouseIn(this)" onmouseout="OnMouseOut(this)">>> </a>
+            <% }else{ %>
+            <a href="<%=Path%>/<%=dd%>" onmouseover="OnMouseIn(this)" onmouseout="OnMouseOut(this)"><<< </a>
+            <% } %>
+            <a href="/SensorWeb/Device/<%=Device.getName()%>/<%=dd%>" onmouseover="OnMouseIn(this)" onmouseout="OnMouseOut(this)"><%=dd%></a><br>
+            <%}
+                    }
             
-        </div>
-    </nav>
-    <article>
-        <%
-        String Path=(String)request.getAttribute("Path");
-        boolean isRange=false;
-        if (Path!=null){
-        if (Path.contains("Range")){
-            isRange=true;
-        }
-        }
-            DeviceStore Device = (DeviceStore) request.getAttribute("Device");
+                Map<String, UDTValue> sensorMap = Device.gtSensors();
+                if (sensorMap != null){
+                    //UserType SensorReadingType=Device.getreadingType();
+                    for (Map.Entry<String, UDTValue> entry : sensorMap.entrySet()) {
+            %><%=entry.getKey()%>, 
+            <%
+                 UDTValue sensor= entry.getValue();
+                 float fValue=sensor.getFloat("fValue");
+                 int iValue=sensor.getInt("iValue");
+                 String sValue=sensor.getString("sValue");
+                 if (fValue !=0){%>
+            <%=sensor.getFloat("fValue")%>,
+            <%}if (iValue !=0){%>
+            <%=sensor.getInt("iValue")%>,
+            <%}if (sValue !=null){%>
+            <%=sensor.getString("sValue")%>
+            <%}%>
+            <br>
+            <%   }
+           }
+           }
+           java.util.LinkedList<DeviceStore> Devices = (java.util.LinkedList<DeviceStore>) request.getAttribute("Devices");
 
-            if (Device != null) {
-        %>
-        <h2>Device <a href="/SensorWeb/Device/<%=Device.getName()%>"   ><%=Device.getName()%></a></h2>
-        <%
-            Map<String, String> meta = Device.getMeta();
-            if (meta != null) {
-                for (Map.Entry<String, String> entry : meta.entrySet()) {
-        %><%=entry.getKey()%>, <%=entry.getValue()%><br><%
+           if (Devices == null) {
+            %>
+
+            <%
+            } else {
+                Iterator<DeviceStore> iterator;
+                iterator = Devices.iterator();
+                while (iterator.hasNext()) {
+                    DeviceStore p = (DeviceStore) iterator.next();
+
+            %>
+            <a href="/SensorWeb/Device/<%=p.getName()%>" onmouseover="OnMouseIn(this)" onmouseout="OnMouseOut(this)"><%=p.getName()%></a><br/><%
+
+                    }
                 }
-            }
-
-            List<Date> dates = Device.getDates();
-            if (dates != null) {
-                Iterator<Date> it = dates.iterator();
-                while (it.hasNext()) {
-                    Date dd = it.next();
-                    if (isRange==false){
-        %>
-        
-        <a href="/SensorWeb/Range/<%=Device.getName()%>/<%=dd%>" onmouseover="OnMouseIn (this)" onmouseout="OnMouseOut (this)">>> </a>
-        <% }else{ %>
-               <a href="<%=Path%>/<%=dd%>" onmouseover="OnMouseIn (this)" onmouseout="OnMouseOut (this)"><<< </a>
-        <% } %>
-        <a href="/SensorWeb/Device/<%=Device.getName()%>/<%=dd%>" onmouseover="OnMouseIn (this)" onmouseout="OnMouseOut (this)"><%=dd%></a><br>
-        <%}
-                }
-            
-            Map<String, UDTValue> sensorMap = Device.gtSensors();
-            if (sensorMap != null){
-                //UserType SensorReadingType=Device.getreadingType();
-                for (Map.Entry<String, UDTValue> entry : sensorMap.entrySet()) {
-        %><%=entry.getKey()%>, 
-        <%
-             UDTValue sensor= entry.getValue();
-             float fValue=sensor.getFloat("fValue");
-             int iValue=sensor.getInt("iValue");
-             String sValue=sensor.getString("sValue");
-             if (fValue !=0){%>
-             <%=sensor.getFloat("fValue")%>,
-             <%}if (iValue !=0){%>
-             <%=sensor.getInt("iValue")%>,
-              <%}if (sValue !=null){%>
-             <%=sensor.getString("sValue")%>
-             <%}%>
-             <br>
-             <%   }
-            }
-            }
-            java.util.LinkedList<DeviceStore> Devices = (java.util.LinkedList<DeviceStore>) request.getAttribute("Devices");
-
-            if (Devices == null) {
-        %>
-        
-        <%
-        } else {
-            Iterator<DeviceStore> iterator;
-            iterator = Devices.iterator();
-            while (iterator.hasNext()) {
-                DeviceStore p = (DeviceStore) iterator.next();
-
-        %>
-        <a href="/SensorWeb/Device/<%=p.getName()%>" onmouseover="OnMouseIn (this)" onmouseout="OnMouseOut (this)"><%=p.getName()%></a><br/><%
-
-                }
-            }
-        %>
-    </article>
-</body>
+            %>
+        </article>
+    </body>
 </html>
