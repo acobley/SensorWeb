@@ -9,6 +9,7 @@ import com.datastax.driver.core.UDTValue;
 import com.datastax.driver.core.UserType;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -67,6 +68,7 @@ public class DeviceStore {
     }
     
     public List<Map<String,Map<String,String>> > getSensorList(){
+        // List of <Sensor Name, <Type, Value>>
         List<Map<String,Map<String,String>>>  lst= new LinkedList<Map<String,Map<String,String>>> ();
         for (Map.Entry<String, UDTValue> entry : sensorMap.entrySet()){
             String SensorName=entry.getKey();
@@ -93,6 +95,15 @@ public class DeviceStore {
         return lst;
     }
 
+    //get readings list of <Date, <Sensor Name, <Type, Value>>>
+    public List<Map<Date, Map<String,Map<String,String>>>> getReadings(){
+        List<Map<Date, Map<String,Map<String,String>>>> lst = new LinkedList<Map<Date, Map<String,Map<String,String>>>>();
+        for (Map.Entry<Date,Map<String, UDTValue>> entry : readings.entrySet()){
+            
+        }
+        return lst;
+    }
+    
     public void addReading(Date insertDate, Map<String, UDTValue> Sensors){
         if (readings == null)
         {
