@@ -67,7 +67,7 @@ public class DeviceStore {
         return sensorMap;
     }
     
-    public List<Map<String,Map<String,String>> > getSensorList(){
+    public List<Map<String,Map<String,String>>> getSensorList(){
         // List of <Sensor Name, <Type, Value>>
         List<Map<String,Map<String,String>>>  lst= new LinkedList<Map<String,Map<String,String>>> ();
         for (Map.Entry<String, UDTValue> entry : sensorMap.entrySet()){
@@ -96,10 +96,11 @@ public class DeviceStore {
     }
 
     //get readings list of <Date, <Sensor Name, <Type, Value>>>
-    public List<Map<Date, Map<String,Map<String,String>>>> getReadings(){
-        List<Map<Date, Map<String,Map<String,String>>>> lst = new LinkedList<Map<Date, Map<String,Map<String,String>>>>();
+    public List<Map<Date, List<Map<String,Map<String,String>>>>> getReadings(){
+        List<Map<Date, List<Map<String,Map<String,String>>>>> readinglst = new LinkedList<Map<Date, List<Map<String,Map<String,String>>>>>();
         for (Map.Entry<Date,Map<String, UDTValue>> entry : readings.entrySet()){
             Date InsertionDate= entry.getKey();
+             List<Map<String,Map<String,String>>>  lst= new LinkedList<Map<String,Map<String,String>>> ();
             Map<String, UDTValue> sensorMap= entry.getValue();
             for (Map.Entry<String, UDTValue> sensorentry : sensorMap.entrySet()){
             String SensorName=sensorentry.getKey();
@@ -122,9 +123,10 @@ public class DeviceStore {
              lst.add(Sensor);
              
         }
-            
+            Map<Date, List<Map<String,Map<String,String>>>> reading = new HashMap<Date, List<Map<String,Map<String,String>>>>();
+            reading.put(InsertionDate,lst);
         }
-        return lst;
+        return readinglst;
     }
     
     public void addReading(Date insertDate, Map<String, UDTValue> Sensors){
