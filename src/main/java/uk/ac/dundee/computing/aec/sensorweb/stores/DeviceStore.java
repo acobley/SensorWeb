@@ -30,6 +30,7 @@ public class DeviceStore {
     Map<String, String> SensorReading;
     Map<String,Map<String,String>> Sensor;
     
+    Map<Date,Map<String, UDTValue>> readings =null;
     
     public void Device() {
 
@@ -92,6 +93,15 @@ public class DeviceStore {
         return lst;
     }
 
+    public void addReading(Date insertDate, Map<String, UDTValue> Sensors){
+        if (readings == null)
+        {
+            readings = new HashMap<Date,Map<String, UDTValue>>();
+        }
+        
+        readings.put(insertDate, Sensors);
+    }
+    
     public void addDate(Date dd){
         if (dates == null){
             dates = new LinkedList<Date>();
