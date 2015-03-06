@@ -96,9 +96,8 @@ public class DeviceStore {
     }
 
     //get readings list of <Date, <Sensor Name, <Type, Value>>>
-    public List<Map<Date, List<Map<String,Map<String,String>>>>> getReadings(){
-        List<Map<Date, List<Map<String,Map<String,String>>>>> readinglst = new LinkedList<Map<Date, List<Map<String,Map<String,String>>>>>();
-        for (Map.Entry<Date,Map<String, UDTValue>> entry : readings.entrySet()){
+    public Map<Date, List<Map<String,Map<String,String>>>> getReadings(){
+        Map<Date, List<Map<String,Map<String,String>>>> reading = new HashMap<Date, List<Map<String,Map<String,String>>>>();        for (Map.Entry<Date,Map<String, UDTValue>> entry : readings.entrySet()){
             Date InsertionDate= entry.getKey();
              List<Map<String,Map<String,String>>>  lst= new LinkedList<Map<String,Map<String,String>>> ();
             Map<String, UDTValue> sensorMap= entry.getValue();
@@ -123,10 +122,9 @@ public class DeviceStore {
              lst.add(Sensor);
              
         }
-            Map<Date, List<Map<String,Map<String,String>>>> reading = new HashMap<Date, List<Map<String,Map<String,String>>>>();
             reading.put(InsertionDate,lst);
         }
-        return readinglst;
+        return reading;
     }
     
     public void addReading(Date insertDate, Map<String, UDTValue> Sensors){
