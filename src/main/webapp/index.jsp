@@ -19,6 +19,23 @@
 
     </head>
     <body>
+    <header>
+        <h1><a href="/SensorWeb/Devices" onmouseover="OnHeadingIn (this)">Sensors</a></h1>
+        <h2>V1.0</h2>
+        <h3>Range Slice </h3>
+    </header>
+    <nav>
+        <%
+            String PATH=null;
+        if (request.getAttribute("Path")!=null){
+        PATH=request.getAttribute("Path").toString();
+        }
+        if (PATH !=null){%>
+        <a href="<%=PATH%>/JSON">Get json for this page</a>
+        <script>
+            $(function () {
+    setPath("<%=PATH%>");	
+});
         <header>
             <h1><a href="/SensorWeb/Devices" onmouseover="OnHeadingIn(this)">Sensors</a></h1>
             <h2>V1.0</h2>
