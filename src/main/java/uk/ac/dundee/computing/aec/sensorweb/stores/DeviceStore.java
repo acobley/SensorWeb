@@ -128,6 +128,43 @@ public class DeviceStore {
         return reading;
     }
 
+    
+    //get readings map of <Date, <Sensor Name, <Type, Value>>>
+    //in a form for D3 to use, miss out Strings
+    public Map<Date, List<Map<String, Map<String, String>>>> getD3Readings() {
+        Map<Date, List<Map<String, Map<String, String>>>> reading = new HashMap<Date, List<Map<String, Map<String, String>>>>();
+        for (Map.Entry<Date, Map<String, UDTValue>> entry : readings.entrySet()) {
+            Date InsertionDate = entry.getKey();
+            List<Map<String, Map<String, String>>> lst = new LinkedList<Map<String, Map<String, String>>>();
+            Map<String, UDTValue> sensorMap = entry.getValue();
+            for (Map.Entry<String, UDTValue> sensorentry : sensorMap.entrySet()) {
+                String SensorName = sensorentry.getKey();
+                UDTValue sensor = sensorentry.getValue();
+                Map<String, String> SensorReading = new HashMap<String, String>();
+                float fValue = sensor.getFloat("fValue");
+                String sfValue = Float.toString(fValue);
+
+                int iValue = sensor.getInt("iValue");
+                String siValue = Integer.toString(iValue);
+                String sValue = sensor.getString("sValue");
+                if (fValue != 0) {
+                    SensorReading.put("fValue", sfValue);
+                }
+                if (iValue != 0) {
+                    SensorReading.put("iValue", siValue);
+                }
+
+                Map<String, Map<String, String>> Sensor = new HashMap<String, Map<String, String>>();
+                Sensor.put(SensorName, SensorReading);
+                lst.add(Sensor);
+
+            }
+            reading.put(InsertionDate, lst);
+        }
+        return reading;
+    }
+    
+    
     public void addReading(Date insertDate, Map<String, UDTValue> Sensors) {
         if (readings == null) {
             readings = new HashMap<Date, Map<String, UDTValue>>();

@@ -1,5 +1,6 @@
 
 
+<%@page import="java.net.URL"%>
 <%@page import="com.datastax.driver.core.UserType"%>
 <%@page import="com.datastax.driver.core.UDTValue"%>
 <%@page import="java.util.Date"%>
@@ -16,6 +17,7 @@
         <link rel="stylesheet" type="text/css" href="/SensorWeb/Styles.css" />
         <script type="text/javascript" src="http://code.jquery.com/jquery-2.1.3.min.js"></script>
         <script type="text/javascript" src="/SensorWeb/scripts/preview.js"></script>
+         <script type="text/javascript" src="/SensorWeb/scripts/Graphs.js"></script>
         <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
 
     </head>
@@ -28,14 +30,19 @@
     <nav>
         <%
             String PATH=null;
+            String ServerPath=new URL(request.getScheme(), 
+        request.getServerName(), 
+        request.getServerPort(),"").toString();
+            int port=request.getServerPort();
         if (request.getAttribute("Path")!=null){
         PATH=request.getAttribute("Path").toString();
         }
         if (PATH !=null){%>
+        
         <a href="<%=PATH%>/JSON">Get json for this page</a>
         <script>
             $(function () {
-    setPath("<%=PATH%>");	
+    setPath("<%=ServerPath%><%=PATH%>");	
 });
         
             </script>
