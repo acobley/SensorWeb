@@ -16,6 +16,7 @@
         <link rel="stylesheet" type="text/css" href="/SensorWeb/Styles.css" />
         <script type="text/javascript" src="http://code.jquery.com/jquery-2.1.3.min.js"></script>
         <script type="text/javascript" src="/SensorWeb/scripts/preview.js"></script>
+        <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
 
     </head>
     <body>
