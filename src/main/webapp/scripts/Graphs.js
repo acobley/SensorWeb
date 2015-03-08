@@ -12,6 +12,7 @@ function drawGraph(Data) {
         svg = d3.select("body").append("svg").attr("width", Width).attr(
                 "Height", Height);
     }
+    
     var circles = svg.selectAll("circle").data(Data).enter()
 			.append("circle");
 
@@ -30,7 +31,7 @@ function getGraphsData(){
         if (error){
             console.log(error);
         } else{
-            var readings=data["Readings"];
+            var readings=data["D3Readings"];
             drawGraph(readings);
         }
     });
