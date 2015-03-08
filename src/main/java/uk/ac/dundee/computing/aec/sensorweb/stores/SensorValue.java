@@ -30,7 +30,7 @@ public class SensorValue {
         return dd;
     }
 
-    public String Valye() {
+    public String getValue() {
         return Value;
 
     }
