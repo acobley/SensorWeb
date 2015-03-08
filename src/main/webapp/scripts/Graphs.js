@@ -17,12 +17,12 @@ function drawGraph(Data) {
 			.append("circle");
 
 	circles.attr("cx", function(d,i) {
-                var dd=d;
+                
 		return i;
 	}).attr("cy", function(d,i) {
-		return i;
+		return d.value;
 	}).attr("r", function(d,i) {
-		return 20;
+		return 2;
 	});
 }
 
@@ -32,7 +32,8 @@ function getGraphsData(){
             console.log(error);
         } else{
             var readings=data["D3Readings"];
-            drawGraph(readings);
+            var temperature=readings["Temperature"];
+            drawGraph(temperature);
         }
     });
 
