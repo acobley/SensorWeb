@@ -6,8 +6,8 @@
 
 
 function drawGraph(Data,Title) {
-    Width = 300;
-    Height = 200;
+    Width = 600;
+    Height = 300;
     var Datalength = Data.length;
     svg = d3.select("body").append("svg").attr("width", Width).attr("Height", Height);
     
