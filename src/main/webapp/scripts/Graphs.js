@@ -33,6 +33,9 @@ function getGraphsData(){
         } else{
             var readings=data["D3Readings"];
             var temperature=readings["Temperature"];
+            readingsforEach(function(entry) {
+    console.log(entry);
+});
             drawGraph(temperature);
         }
     });
