@@ -10,6 +10,7 @@ function drawGraph(Data) {
     Height = 200;
     var Datalength = Data.length;
     svg = d3.select("body").append("svg").attr("width", Width).attr("Height", Height);
+    svg.selectAll("svg").append("br");
     var ymin = d3.min(Data, function (d) {
         return parseInt(d.value, 10);
     });
@@ -18,11 +19,7 @@ function drawGraph(Data) {
     });
 
     var yscale = d3.scale.linear()
-            .domain([d3.min(Data, function (d) {
-                    return parseInt(d.value, 10);
-                })], [d3.max(Data, function (d) {
-                    return parseInt(d.value, 10);
-                })])
+            .domain([ymin,ymax])
             .range([0, Height]);
     var xscale = d3.scale.linear()
             .domain([0, Datalength])
@@ -33,7 +30,8 @@ function drawGraph(Data) {
     circles.attr("cx", function (d, i) {
         return xscale(i);
     }).attr("cy", function (d, i) {
-        return yscale(parseInt(d.value, 10));
+        cy=parseInt(d.value, 10);
+        return yscale(cy);
     }).attr("r", function (d, i) {
         return 2;
     });
