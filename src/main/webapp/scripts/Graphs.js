@@ -12,15 +12,24 @@ function drawGraph(Data) {
         svg = d3.select("body").append("svg").attr("width", Width).attr(
                 "Height", Height);
     }
-    
+    var ymin=d3.min(Data, function(d){
+        return d.value;});
+    var ymax=d3.max(Data, function(d){
+        return d.value;});
+    var yscale= d3.scale.linear()
+            .domain ([d3.min(Data, function(d){return d.value;})],[d3.max(Data, function(d){return d.value;})])
+            .range([0,Height]);
+    var xscale=d3.scale.linear()
+            .domain ([0,Data.length()])
+            .range([0,Width]);
     var circles = svg.selectAll("circle").data(Data).enter()
 			.append("circle");
 
 	circles.attr("cx", function(d,i) {
                 
-		return i;
+		return xscale(i);
 	}).attr("cy", function(d,i) {
-		return d.value;
+		return yscale(d.value);
 	}).attr("r", function(d,i) {
 		return 2;
 	});
@@ -32,10 +41,9 @@ function getGraphsData(){
             console.log(error);
         } else{
             var readings=data["D3Readings"];
-            var temperature=readings["Temperature"];
-            readingsforEach(function(entry) {
-    console.log(entry);
-});
+            var keys=readings.Sensor0;
+            var temperature=readings["Sensor0"];
+            
             drawGraph(temperature);
         }
     });
