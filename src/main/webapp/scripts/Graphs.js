@@ -10,23 +10,24 @@ function drawGraph(Data) {
     Height = 200;
     var Datalength = Data.length;
     svg = d3.select("body").append("svg").attr("width", Width).attr("Height", Height);
-    svg.selectAll("svg").append("br");
+    
     var ymin = d3.min(Data, function (d) {
         return parseFloat(d.value, 10);
     });
     var ymax = d3.max(Data, function (d) {
         return parseFloat(d.value, 10);
     });
-
+    var padding=30;
     var yscale = d3.scale.linear()
             .domain([ymin,ymax])
-            .range([0, Height]);
+            .range([ Height-padding,padding]);
     var xscale = d3.scale.linear()
             .domain([0, Datalength])
-            .range([0, Width]);
+            .range([padding, Width-padding]);
     var circles = svg.selectAll("circle").data(Data).enter()
             .append("circle");
-
+    var xAxis=d3.svg.axis().scale(xscale).orient("bottom").ticks(5);
+    var yAxis=d3.svg.axis().scale(yscale).orient("left").ticks(5);
     circles.attr("cx", function (d, i) {
         return xscale(i);
     }).attr("cy", function (d, i) {
@@ -35,6 +36,12 @@ function drawGraph(Data) {
     }).attr("r", function (d, i) {
         return 2;
     });
+     svg.append("g").attr("class","axis")
+            //.attr("transform", "translate(0," + (Height - padding) + ")")
+            .call(xAxis);
+     svg.append("g").attr("class","axis")
+            .attr("transform","translate("+padding+",0)")
+            .call(yAxis);
 }
 
 function getGraphsData() {
@@ -49,7 +56,7 @@ function getGraphsData() {
             for (var i in readings) {
                 var reading = readings[i];
                 drawGraph(reading);
-                console.log(i);
+                //console.log(i);
             }
 
         }

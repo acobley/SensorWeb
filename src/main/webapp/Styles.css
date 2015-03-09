@@ -17,10 +17,11 @@ nav {
 
 svg{
     text-align: left;
-    border: 2px;
-    border-color: black;
+    border: 1px;
+    border-color:aliceblue;
     border-style:solid;
     float: left;
+    margin:5px;
 }
 
 #preview{
@@ -38,4 +39,17 @@ svg{
     border-color: black;
     padding: 5px;
     float: right;
+}
+
+.axis path,
+.axis line{
+    fill:none;
+    stroke:black;
+    shape-rendering:crispEdges;
+}
+
+.axis text{
+    font-family:sans-serif;
+    font-size: 11px;
+    fill:olive;
 }
