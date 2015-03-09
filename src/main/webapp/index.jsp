@@ -23,7 +23,7 @@
     <header>
         <h1><a href="/SensorWeb/Devices" onmouseover="OnHeadingIn (this)">Sensors</a></h1>
         <h2>V1.0</h2>
-        <h3>Range Slice with graphs </h3>
+        <h3>Range Slice with graphs and axis </h3>
     </header>
     <nav>
         <%
