@@ -1,5 +1,3 @@
-
-
 <%@page import="java.net.URL"%>
 <%@page import="com.datastax.driver.core.UserType"%>
 <%@page import="com.datastax.driver.core.UDTValue"%>
@@ -25,7 +23,7 @@
     <header>
         <h1><a href="/SensorWeb/Devices" onmouseover="OnHeadingIn (this)">Sensors</a></h1>
         <h2>V1.0</h2>
-        <h3>Range Slice </h3>
+        <h3>Range Slice with graphs </h3>
     </header>
     <nav>
         <%
