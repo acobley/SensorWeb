@@ -40,7 +40,7 @@ function drawGraph(Data,Title) {
             //.attr("transform", "translate(0," + (Height - padding) + ")")
             .call(xAxis);
      svg.append("g").attr("class","axis")
-            .attr("transform","translate("+padding+",0)")
+            .attr("transform","translate("+1.5*padding+",0)")
             .call(yAxis);
     svg.append("text")
         .attr("x", (Width / 2))             
