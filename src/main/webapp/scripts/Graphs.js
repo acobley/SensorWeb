@@ -12,10 +12,10 @@ function drawGraph(Data) {
     svg = d3.select("body").append("svg").attr("width", Width).attr("Height", Height);
     svg.selectAll("svg").append("br");
     var ymin = d3.min(Data, function (d) {
-        return parseInt(d.value, 10);
+        return parseFloat(d.value, 10);
     });
     var ymax = d3.max(Data, function (d) {
-        return parseInt(d.value, 10);
+        return parseFloat(d.value, 10);
     });
 
     var yscale = d3.scale.linear()
@@ -30,7 +30,7 @@ function drawGraph(Data) {
     circles.attr("cx", function (d, i) {
         return xscale(i);
     }).attr("cy", function (d, i) {
-        cy=parseInt(d.value, 10);
+        cy=parseFloat(d.value, 10);
         return yscale(cy);
     }).attr("r", function (d, i) {
         return 2;
