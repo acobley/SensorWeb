@@ -37,7 +37,7 @@ function drawGraph(Data,Title) {
         return 2;
     });
      svg.append("g").attr("class","axis")
-            .attr("transform", "translate(0," + padding + ")")
+            .attr("transform", "translate(0," + Height - padding + ")")
             .call(xAxis);
      svg.append("g").attr("class","axis")
             .attr("transform","translate("+1.5*padding+",0)")
