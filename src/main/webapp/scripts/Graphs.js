@@ -5,7 +5,7 @@
  */
 
 
-function drawGraph(Data) {
+function drawGraph(Data,Title) {
     Width = 300;
     Height = 200;
     var Datalength = Data.length;
@@ -42,6 +42,14 @@ function drawGraph(Data) {
      svg.append("g").attr("class","axis")
             .attr("transform","translate("+padding+",0)")
             .call(yAxis);
+    svg.append("text")
+        .attr("x", (Width / 2))             
+        .attr("y", (padding / 2))
+        .attr("text-anchor", "middle")  
+        .style("font-size", "16px") 
+        .style("text-decoration", "underline")  
+        .text(Title);
+    
 }
 
 function getGraphsData() {
@@ -55,7 +63,7 @@ function getGraphsData() {
 
             for (var i in readings) {
                 var reading = readings[i];
-                drawGraph(reading);
+                drawGraph(reading,i);
                 //console.log(i);
             }
 
