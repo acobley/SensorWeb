@@ -125,6 +125,8 @@ public class DeviceModel {
                 dd.addDate(row.getDate("insertion_time"));
                 //http://www.datastax.com/documentation/developer/java-driver/2.1/java-driver/reference/udtApi.html
                 dd.setSensors(row.getMap("reading",String.class, UDTValue.class));
+                dd.addReading(row.getDate("insertion_time"), row.getMap("reading",String.class, UDTValue.class));
+
             }
         }
         return dd;
