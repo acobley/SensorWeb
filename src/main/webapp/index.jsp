@@ -88,20 +88,22 @@
                         
                     }
                     if (dates != null) {
+                        int DateCount=0;
                         Iterator<Date> it = dates.iterator();
                         while (it.hasNext()) {
                             Date dd=null;
                             for (int i=0;i<datestep;i++){
                              dd= it.next();
                             }
+                            DateCount++;
                             if (isRange==false){
             %>
 
-            <a href="/SensorWeb/Range/<%=Device.getName()%>/<%=dd%>" onmouseover="OnMouseIn(this)" onmouseout="OnMouseOut(this)">>> </a>
+            <%=DateCount%> : <a href="/SensorWeb/Range/<%=Device.getName()%>/<%=dd%>" onmouseover="OnMouseIn(this)" onmouseout="OnMouseOut(this)">>> </a>
             <% }else{ %>
-            <a href="<%=Path%>/<%=dd%>" onmouseover="OnMouseIn(this)" onmouseout="OnMouseOut(this)"><<< </a>
+             <%=DateCount%> :<a href="<%=Path%>/<%=dd%>" onmouseover="OnMouseIn(this)" onmouseout="OnMouseOut(this)"><<< </a>
             <% } %>
-            <a href="/SensorWeb/Device/<%=Device.getName()%>/<%=dd%>" onmouseover="OnMouseIn(this)" onmouseout="OnMouseOut(this)"><%=dd%></a><br>
+            <%=DateCount%> : <a href="/SensorWeb/Device/<%=Device.getName()%>/<%=dd%>" onmouseover="OnMouseIn(this)" onmouseout="OnMouseOut(this)"><%=dd%></a><br>
             <%}
                     }
             
