@@ -80,10 +80,20 @@
                     }
 
                     List<Date> dates = Device.getDates();
+                    int Numberofdates=dates.size();
+                    int datestep=1;
+                    if (Numberofdates >50){
+                        datestep=Numberofdates/50;
+                        
+                        
+                    }
                     if (dates != null) {
                         Iterator<Date> it = dates.iterator();
                         while (it.hasNext()) {
-                            Date dd = it.next();
+                            Date dd=null;
+                            for (int i=0;i<datestep;i++){
+                             dd= it.next();
+                            }
                             if (isRange==false){
             %>
 
