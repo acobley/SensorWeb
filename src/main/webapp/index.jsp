@@ -92,7 +92,9 @@
                         while (it.hasNext()) {
                             Date dd = null;
                             for (int i = 0; i < datestep; i++) {
+                                if (it.hasNext()){
                                 dd = it.next();
+                                }
                             }
                             DateCount++;
                             if (isRange == false) {
