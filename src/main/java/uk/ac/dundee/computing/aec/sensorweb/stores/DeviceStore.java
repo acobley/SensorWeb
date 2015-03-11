@@ -95,7 +95,7 @@ public class DeviceStore {
     }
 
     //get readings map of <Date, <Sensor Name, <Type, Value>>>
-    public Map<Date, List<Map<String, Map<String, String>>>> getReadings() {
+    public Map<Date, List<Map<String, Map<String, String>>>> gtReadings() {
         Map<Date, List<Map<String, Map<String, String>>>> reading = new HashMap<Date, List<Map<String, Map<String, String>>>>();
         for (Map.Entry<Date, Map<String, UDTValue>> entry : readings.entrySet()) {
             Date InsertionDate = entry.getKey();
