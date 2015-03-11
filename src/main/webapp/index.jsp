@@ -98,7 +98,7 @@
                             }
                             DateCount++;
                             if (isRange == false) {
-                                if (dd!=null){
+                               
             %>
 
             <%=DateCount%> : <a href="/SensorWeb/Range/<%=Device.getName()%>/<%=dd%>" onmouseover="OnMouseIn(this)" onmouseout="OnMouseOut(this)">>> </a>
@@ -108,7 +108,7 @@
             <a href="/SensorWeb/Device/<%=Device.getName()%>/<%=dd%>" onmouseover="OnMouseIn(this)" onmouseout="OnMouseOut(this)"><%=dd%></a><br>
             <%}
                 }
-                    }
+                    
                 Map<String, UDTValue> sensorMap = Device.gtSensors();
                 if (sensorMap != null) {
                     //UserType SensorReadingType=Device.getreadingType();
