@@ -111,6 +111,7 @@ public class DeviceModel {
         PreparedStatement ps = session.prepare(DeviceQuery);
         ResultSet rs = null;
         BoundStatement boundStatement = new BoundStatement(ps);
+        boundStatement.setFetchSize(1000);
         rs = session.execute(boundStatement.bind(java.util.UUID.fromString(DeviceName), new Date(InsertionTime)));
         if (rs.isExhausted()) {
             System.out.println("No Devices");
@@ -137,6 +138,7 @@ public class DeviceModel {
         PreparedStatement ps = session.prepare(DeviceQuery);
         ResultSet rs = null;
         BoundStatement boundStatement = new BoundStatement(ps);
+        boundStatement.setFetchSize(1000);
         rs = session.execute(boundStatement.bind(java.util.UUID.fromString(DeviceName), new Date(StartDate), new Date(EndDate)));
         if (rs.isExhausted()) {
             System.out.println("No Devices");
@@ -144,6 +146,7 @@ public class DeviceModel {
         } else {
             
             dd = new DeviceStore();
+            rs.getAvailableWithoutFetching();
             //dd.setReadingType(SensorReadingType);
             for (Row row : rs) {
                 dd.setName(row.getUUID("name"));
