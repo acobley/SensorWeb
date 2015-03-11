@@ -56,7 +56,7 @@ public class Devices extends HttpServlet {
         boolean RenderJSON = false;
         String args[] = Convertors.SplitRequestPath(request);
         for (int i = 0; i < args.length; i++) {
-            System.out.println(i + " : " + args[i]);
+            //System.out.println(i + " : " + args[i]);
             int Command = -1;
             if (CommandsMap.containsKey(args[i])) {
                 if ((Integer) CommandsMap.get(args[i]) == 1) {
@@ -94,7 +94,7 @@ public class Devices extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        System.out.println("get Command");
+        
         processRequest(request, response);
     }
 

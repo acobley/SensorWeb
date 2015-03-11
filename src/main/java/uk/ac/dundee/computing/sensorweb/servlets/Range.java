@@ -62,9 +62,7 @@ public class Range extends HttpServlet {
             }
         }
 
-        for (int i = 0; i < args.length; i++) {
-            System.out.println(i + " : " + args[i]);
-        }
+        
         String Device = args[2];
         if (Device != null) {
             DeviceModel dm = new DeviceModel();

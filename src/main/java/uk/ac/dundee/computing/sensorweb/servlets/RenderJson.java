@@ -100,7 +100,7 @@ public class RenderJson extends HttpServlet {
                          Class cl = rt.getClass();
                            String className=cl.getName();
 	                 if (rt!=null){
-	                	 System.out.println(Name+" Return "+ rt);
+	                	 //System.out.println(Name+" Return "+ rt);
 	                	 try{
 	                		 Record.put(Name,rt);
 	                	 }catch (Exception JSONet){

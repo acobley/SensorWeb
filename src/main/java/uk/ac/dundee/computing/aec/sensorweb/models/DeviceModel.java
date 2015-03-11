@@ -51,7 +51,7 @@ public class DeviceModel {
             for (Row row : rs) {
                 DeviceStore dd = new DeviceStore();
                 dd.setName(row.getUUID("name"));
-                System.out.println("Device " + dd.getName());
+                //System.out.println("Device " + dd.getName());
                 devices.add(dd);
             }
         }
