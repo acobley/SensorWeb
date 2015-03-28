@@ -135,6 +135,7 @@ public class DeviceStore {
     //in a form for D3 to use, miss out Strings
     //Map of Sensor:[{Date:D,Value:V}]
     public Map<String, List<SensorValue>> getD3Readings() {
+        int numMinutes=10;
         Map<String, List<SensorValue>> d3Readings = new HashMap<String, List<SensorValue>>();
 
         for (Map.Entry<String, UDTValue> sensornameentry : sensorMap.entrySet()) {
@@ -143,6 +144,7 @@ public class DeviceStore {
             int currentMin=-1;
             float fTotal=(float)0.0;
             int num=0;
+            int minCount=0;
             for (Map.Entry<Date, Map<String, UDTValue>> entry : readings.entrySet()) {
                 Date InsertionDate = entry.getKey();
                 Calendar cl = Calendar.getInstance();
@@ -164,13 +166,17 @@ public class DeviceStore {
                     fTotal=fTotal+fValue;
                     num++;
                 }else{
+                    minCount++;
+                    if (minCount>=numMinutes){
                     fValue=fTotal/num;
                     num=0;
+                    minCount=0;
                     fTotal=(float)0.0;
                     String sValue = Float.toString(fValue);
                 SensorValue sv = new SensorValue();
                 sv.create(InsertionDate, sValue);
                 Values.add(sv);
+                    }
                 }
                 
                 
