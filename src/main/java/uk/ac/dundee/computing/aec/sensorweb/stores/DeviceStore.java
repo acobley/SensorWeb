@@ -7,6 +7,7 @@ package uk.ac.dundee.computing.aec.sensorweb.stores;
 
 import com.datastax.driver.core.UDTValue;
 import com.datastax.driver.core.UserType;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -139,19 +140,40 @@ public class DeviceStore {
         for (Map.Entry<String, UDTValue> sensornameentry : sensorMap.entrySet()) {
             String SensorName = sensornameentry.getKey();
             List<SensorValue> Values = new LinkedList<SensorValue>();
+            int currentMin=-1;
+            float fTotal=(float)0.0;
+            int num=0;
             for (Map.Entry<Date, Map<String, UDTValue>> entry : readings.entrySet()) {
                 Date InsertionDate = entry.getKey();
+                Calendar cl = Calendar.getInstance();
+                cl.setTime(InsertionDate);
+                int minute     = cl.get(Calendar.MINUTE);
                 Map<String, UDTValue> sensorMap = entry.getValue();
                 UDTValue sensor = sensorMap.get(SensorName);
                 float fValue = sensor.getFloat("fValue");
-                String sValue = Float.toString(fValue);
+                
                 if (fValue == 0) {
                     int iValue = sensor.getInt("iValue");
-                    sValue = Integer.toString(iValue);
+                    fValue=(float)iValue;
                 }
+                if (currentMin==-1){
+                    fTotal=fTotal+fValue;
+                    num++;
+                    currentMin=minute;
+                }else if (currentMin==minute){
+                    fTotal=fTotal+fValue;
+                    num++;
+                }else{
+                    fValue=fTotal/num;
+                    num=0;
+                    fTotal=(float)0.0;
+                    String sValue = Float.toString(fValue);
                 SensorValue sv = new SensorValue();
                 sv.create(InsertionDate, sValue);
                 Values.add(sv);
+                }
+                
+                
 
             }
             d3Readings.put(SensorName, Values);
