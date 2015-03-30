@@ -10,6 +10,7 @@ import com.datastax.driver.core.Session;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletConfig;
@@ -70,17 +71,38 @@ public class Range extends HttpServlet {
             DeviceStore dd = null;
             int la = args.length;
             //This really needs rewritten !
+            int Aggregation=1;
             if (la ==5){
-                   dd = dm.getDeviceRange(Device, args[3], args[4]);
+                   Date EndDate=null;
+                   
+                   try{
+                       EndDate= Convertors.StringToDate(args[4]);
+                       dd = dm.getDeviceRange(Device, args[3], args[4]);
+                   }catch (Exception et){
+                       try{
+                          Aggregation=Integer.parseInt(args[4]);
+                       }catch(Exception et2){
+                           System.out.println("int parse error "+et2);
+                       }
+                       try {
+                       dd = dm.getDeviceRange(Device, args[3]);
+                       }catch(Exception et3){
+                           System.out.println("Date parse errror"+et3);
+                       }
+                   }
+                   
             } else if (la == 4) {
-                
+                try {
                     dd = dm.getDeviceRange(Device, args[3]);
+                    }catch(Exception et3){
+                           System.out.println("Date parse errror"+et3);
+                       }
 
             } else {
 
                 dd = dm.getDevice(Device);
             }
-
+            dd.setAggregation(Aggregation);
             if (RenderJSON == true) {
                 request.setAttribute("Data", dd);
                 RequestDispatcher rdjson = request.getRequestDispatcher("/RenderJson");

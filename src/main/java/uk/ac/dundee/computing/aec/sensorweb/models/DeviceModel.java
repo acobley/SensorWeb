@@ -13,6 +13,7 @@ import com.datastax.driver.core.Row;
 import com.datastax.driver.core.Session;
 import com.datastax.driver.core.UDTValue;
 import com.datastax.driver.core.UserType;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -82,7 +83,7 @@ public class DeviceModel {
         return dd;
     }
 
-    public DeviceStore getDevice(String DeviceName, String InsertionTime) {
+    public DeviceStore getDevice(String DeviceName, String InsertionTime) throws ParseException{
         DeviceStore dd = null;
         String DeviceQuery = "select * from sensorsync.sensors where name=? and insertion_time=?";
         PreparedStatement ps = session.prepare(DeviceQuery);
@@ -110,7 +111,7 @@ public class DeviceModel {
     }
     
     //get readings for a date > than Insertion Time
-    public DeviceStore getDeviceRange(String DeviceName, String InsertionTime) {
+    public DeviceStore getDeviceRange(String DeviceName, String InsertionTime) throws ParseException{
         DeviceStore dd = null;
         String DeviceQuery = "select * from sensorsync.sensors where name=? and insertion_time>=? order by insertion_time desc";
         PreparedStatement ps = session.prepare(DeviceQuery);
@@ -138,7 +139,7 @@ public class DeviceModel {
         }
         return dd;
     }
-    public DeviceStore getDeviceRange(String DeviceName, String StartDate, String EndDate) {
+    public DeviceStore getDeviceRange(String DeviceName, String StartDate, String EndDate) throws ParseException{
         DeviceStore dd = null;
         String DeviceQuery = "select * from sensorsync.sensors where name=? and insertion_time>? and insertion_time<? order by insertion_time desc";
         PreparedStatement ps = session.prepare(DeviceQuery);

@@ -73,8 +73,11 @@ public class Device extends HttpServlet {
             int la = args.length;
             //This really needs rewritten !
             if (la == 4) {
-                
+                try{
                     dd = dm.getDevice(Device, args[3]);
+                    }catch(Exception et3){
+                           System.out.println("Date parse errror"+et3);
+                       }
 
             } else {
 

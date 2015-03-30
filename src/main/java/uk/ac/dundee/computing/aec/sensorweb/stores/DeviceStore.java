@@ -32,6 +32,7 @@ public class DeviceStore {
     Map<String, Map<String, String>> Sensor;
 
     Map<Date, Map<String, UDTValue>> readings = null;
+    private int Aggregation=1;
 
     public void Device() {
 
@@ -131,11 +132,14 @@ public class DeviceStore {
         return reading;
     }
 
+    
+    
+    
     //get readings map of <Date, <Sensor Name, <Type, Value>>>
     //in a form for D3 to use, miss out Strings
     //Map of Sensor:[{Date:D,Value:V}]
     public Map<String, List<SensorValue>> getD3Readings() {
-        int numMinutes=10;
+        int numMinutes=Aggregation;
         Map<String, List<SensorValue>> d3Readings = new HashMap<String, List<SensorValue>>();
 
         for (Map.Entry<String, UDTValue> sensornameentry : sensorMap.entrySet()) {
@@ -205,6 +209,14 @@ public class DeviceStore {
 
     public List<Date> getDates() {
         return dates;
+    }
+    
+    public void setAggregation(int Aggregation){
+        this.Aggregation=Aggregation;
+    }
+    
+    public int getAggregation(){
+        return Aggregation;
     }
 
 }
