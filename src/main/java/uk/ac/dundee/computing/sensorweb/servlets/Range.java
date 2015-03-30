@@ -103,8 +103,9 @@ public class Range extends HttpServlet {
 
                 dd = dm.getDevice(Device);
             }
-            dd.setAggregation(Aggregation);
+            
             if (RenderJSON == true) {
+                dd.setAggregation(Aggregation);
                 request.setAttribute("Data", dd);
                 RequestDispatcher rdjson = request.getRequestDispatcher("/RenderJson");
                 rdjson.forward(request, response);
