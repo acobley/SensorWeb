@@ -91,7 +91,7 @@ public class DeviceModel {
         Calendar cl = Calendar.getInstance();
         SimpleDateFormat sdf= new SimpleDateFormat();
         try {
-        cl.setTime(sdf.parse(InsertionTime));
+            cl.setTime(sdf.parse(InsertionTime));
         }catch (Exception et){
             System.out.println("Can't convert date"+et);
         }
