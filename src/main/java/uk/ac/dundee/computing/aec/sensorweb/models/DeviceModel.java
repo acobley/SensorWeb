@@ -95,7 +95,8 @@ public class DeviceModel {
         }catch (Exception et){
             System.out.println("Can't convert date"+et);
         }
-        rs = session.execute(boundStatement.bind(java.util.UUID.fromString(DeviceName), cl));
+        Date dt=cl.getTime();
+        rs = session.execute(boundStatement.bind(java.util.UUID.fromString(DeviceName), dt));
         if (rs.isExhausted()) {
             System.out.println("No Devices");
             return null;
