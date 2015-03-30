@@ -13,6 +13,8 @@ import com.datastax.driver.core.Row;
 import com.datastax.driver.core.Session;
 import com.datastax.driver.core.UDTValue;
 import com.datastax.driver.core.UserType;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -85,7 +87,15 @@ public class DeviceModel {
         PreparedStatement ps = session.prepare(DeviceQuery);
         ResultSet rs = null;
         BoundStatement boundStatement = new BoundStatement(ps);
-        rs = session.execute(boundStatement.bind(java.util.UUID.fromString(DeviceName), new Date(InsertionTime)));
+        
+        Calendar cl = Calendar.getInstance();
+        SimpleDateFormat sdf= new SimpleDateFormat();
+        try {
+        cl.setTime(sdf.parse(InsertionTime));
+        }catch (Exception et){
+            System.out.println("Can't convert date"+et);
+        }
+        rs = session.execute(boundStatement.bind(java.util.UUID.fromString(DeviceName), cl));
         if (rs.isExhausted()) {
             System.out.println("No Devices");
             return null;
