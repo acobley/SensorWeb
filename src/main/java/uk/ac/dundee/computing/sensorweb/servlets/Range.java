@@ -65,13 +65,14 @@ public class Range extends HttpServlet {
 
         
         String Device = args[2];
+        int Aggregation=1;
         if (Device != null) {
             DeviceModel dm = new DeviceModel();
             dm.setSession(session);
             DeviceStore dd = null;
             int la = args.length;
             //This really needs rewritten !
-            int Aggregation=1;
+            
             if (la ==5){
                    Date EndDate=null;
                    
