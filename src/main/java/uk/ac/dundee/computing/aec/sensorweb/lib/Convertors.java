@@ -5,6 +5,9 @@ import java.util.StringTokenizer;
 //import java.util.UUID;
 import javax.servlet.http.HttpServletRequest;
 import com.eaio.uuid.UUID;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
 public final class Convertors {
     public static int DISPLAY_IMAGE=0;
@@ -169,4 +172,16 @@ public final class Convertors {
 
     }
 
+    public static Date StringToDate(String dd){
+        Calendar cl = Calendar.getInstance();
+        SimpleDateFormat sdf= new SimpleDateFormat("EEE MMM d HH:mm:ss zzz yyyy");
+        try {
+            cl.setTime(sdf.parse(dd));
+        }catch (Exception et){
+            System.out.println("Can't convert date"+et);
+        }
+        Date dt=cl.getTime();
+        return (dt);
+    }
+    
 }

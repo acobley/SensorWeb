@@ -18,6 +18,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import uk.ac.dundee.computing.aec.sensorweb.lib.Convertors;
 import uk.ac.dundee.computing.aec.sensorweb.stores.DeviceStore;
 
 /**
@@ -88,14 +89,7 @@ public class DeviceModel {
         ResultSet rs = null;
         BoundStatement boundStatement = new BoundStatement(ps);
         
-        Calendar cl = Calendar.getInstance();
-        SimpleDateFormat sdf= new SimpleDateFormat();
-        try {
-            cl.setTime(sdf.parse(InsertionTime));
-        }catch (Exception et){
-            System.out.println("Can't convert date"+et);
-        }
-        Date dt=cl.getTime();
+        Date dt=Convertors.StringToDate(InsertionTime);
         rs = session.execute(boundStatement.bind(java.util.UUID.fromString(DeviceName), dt));
         if (rs.isExhausted()) {
             System.out.println("No Devices");
@@ -123,7 +117,8 @@ public class DeviceModel {
         ResultSet rs = null;
         BoundStatement boundStatement = new BoundStatement(ps);
         boundStatement.setFetchSize(1000);
-        rs = session.execute(boundStatement.bind(java.util.UUID.fromString(DeviceName), new Date(InsertionTime)));
+        Date dt=Convertors.StringToDate(InsertionTime);
+        rs = session.execute(boundStatement.bind(java.util.UUID.fromString(DeviceName), dt));
         if (rs.isExhausted()) {
             System.out.println("No Devices");
             return null;
@@ -150,7 +145,9 @@ public class DeviceModel {
         ResultSet rs = null;
         BoundStatement boundStatement = new BoundStatement(ps);
         boundStatement.setFetchSize(1000);
-        rs = session.execute(boundStatement.bind(java.util.UUID.fromString(DeviceName), new Date(StartDate), new Date(EndDate)));
+        Date st=Convertors.StringToDate(StartDate);
+        Date et=Convertors.StringToDate(EndDate);
+        rs = session.execute(boundStatement.bind(java.util.UUID.fromString(DeviceName), st, et));
         if (rs.isExhausted()) {
             System.out.println("No Devices");
             return null;
