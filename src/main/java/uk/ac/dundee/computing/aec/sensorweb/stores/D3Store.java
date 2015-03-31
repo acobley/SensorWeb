@@ -108,12 +108,13 @@ public class D3Store {
     //Map of Sensor:[{Date:D,Value:V}]
     public Map<String, List<SensorValue>> getD3Readings() {
         int numMinutes = Aggregation;
+        String SensorName =null;
         Map<String, List<SensorValue>> d3Readings = new HashMap<String, List<SensorValue>>();
         try {
         
 
         for (Map.Entry<String, UDTValue> sensornameentry : sensorMap.entrySet()) {
-            String SensorName = sensornameentry.getKey();
+            SensorName = sensornameentry.getKey();
             List<SensorValue> Values = new LinkedList<SensorValue>();
             int currentMin = -1;
             float fTotal = (float) 0.0;
@@ -158,7 +159,7 @@ public class D3Store {
         }
         }catch(Exception et){
             setError(et.toString());
-            System.out.println("Error getteing d3 readings "+et);
+            System.out.println("Error getteing d3 readings "+et+" :" +SensorName);
             et.printStackTrace();
         }
         return d3Readings;
