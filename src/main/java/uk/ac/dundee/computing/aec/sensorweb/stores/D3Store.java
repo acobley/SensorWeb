@@ -109,6 +109,8 @@ public class D3Store {
     public Map<String, List<SensorValue>> getD3Readings() {
         int numMinutes = Aggregation;
         Map<String, List<SensorValue>> d3Readings = new HashMap<String, List<SensorValue>>();
+        try {
+        
 
         for (Map.Entry<String, UDTValue> sensornameentry : sensorMap.entrySet()) {
             String SensorName = sensornameentry.getKey();
@@ -154,7 +156,10 @@ public class D3Store {
             }
             d3Readings.put(SensorName, Values);
         }
-
+        }catch(Exception et){
+            setError(et.toString());
+            et.printStackTrace();
+        }
         return d3Readings;
     }
 
