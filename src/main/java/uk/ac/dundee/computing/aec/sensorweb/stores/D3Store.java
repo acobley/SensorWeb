@@ -20,6 +20,7 @@ import java.util.UUID;
  * @author andycobley
  */
 public class D3Store {
+
     private UUID DeviceName = null;
     private Map<String, String> meta = null;
     private List<Date> dates = null;
@@ -29,19 +30,19 @@ public class D3Store {
     Map<String, Map<String, String>> Sensor;
 
     Map<Date, Map<String, UDTValue>> readings = null;
-    private int Aggregation=1;
+    private int Aggregation = 1;
 
-    private String Error="";
-    public void setError(String Error){
-        this.Error=this.Error+" : "+Error;
+    private String Error = "";
+
+    public void setError(String Error) {
+        this.Error = this.Error + " : " + Error;
     }
-    
-    public String getError()
-    {
+
+    public String getError() {
         return Error;
     }
-    
-        public void Device() {
+
+    public void Device() {
 
     }
 
@@ -58,7 +59,6 @@ public class D3Store {
     }
 
     //Stores the latest values only
-
     public void setSensors(Map Sensors) {
         sensorMap = Sensors;
 
@@ -103,56 +103,53 @@ public class D3Store {
         return lst;
     }
 
-    
     //get readings map of <Date, <Sensor Name, <Type, Value>>>
     //in a form for D3 to use, miss out Strings
     //Map of Sensor:[{Date:D,Value:V}]
     public Map<String, List<SensorValue>> getD3Readings() {
-        int numMinutes=Aggregation;
+        int numMinutes = Aggregation;
         Map<String, List<SensorValue>> d3Readings = new HashMap<String, List<SensorValue>>();
 
         for (Map.Entry<String, UDTValue> sensornameentry : sensorMap.entrySet()) {
             String SensorName = sensornameentry.getKey();
             List<SensorValue> Values = new LinkedList<SensorValue>();
-            int currentMin=-1;
-            float fTotal=(float)0.0;
-            int num=0;
-            int minCount=0;
+            int currentMin = -1;
+            float fTotal = (float) 0.0;
+            int num = 0;
+            int minCount = 0;
             for (Map.Entry<Date, Map<String, UDTValue>> entry : readings.entrySet()) {
                 Date InsertionDate = entry.getKey();
                 Calendar cl = Calendar.getInstance();
                 cl.setTime(InsertionDate);
-                int minute     = cl.get(Calendar.MINUTE);
+                int minute = cl.get(Calendar.MINUTE);
                 Map<String, UDTValue> sensorMap = entry.getValue();
                 UDTValue sensor = sensorMap.get(SensorName);
                 float fValue = sensor.getFloat("fValue");
-                
+
                 if (fValue == 0) {
                     int iValue = sensor.getInt("iValue");
-                    fValue=(float)iValue;
+                    fValue = (float) iValue;
                 }
-                if (currentMin==-1){
-                    fTotal=fTotal+fValue;
+                if (currentMin == -1) {
+                    fTotal = fTotal + fValue;
                     num++;
-                    currentMin=minute;
-                }else if (currentMin==minute){
-                    fTotal=fTotal+fValue;
+                    currentMin = minute;
+                } else if (currentMin == minute) {
+                    fTotal = fTotal + fValue;
                     num++;
-                }else{
+                } else {
                     minCount++;
-                    if (minCount>=numMinutes){
-                    fValue=fTotal/num;
-                    num=0;
-                    minCount=0;
-                    fTotal=(float)0.0;
-                    String sValue = Float.toString(fValue);
-                SensorValue sv = new SensorValue();
-                sv.create(InsertionDate, sValue);
-                Values.add(sv);
+                    if (minCount >= numMinutes) {
+                        fValue = fTotal / num;
+                        num = 0;
+                        minCount = 0;
+                        fTotal = (float) 0.0;
+                        String sValue = Float.toString(fValue);
+                        SensorValue sv = new SensorValue();
+                        sv.create(InsertionDate, sValue);
+                        Values.add(sv);
                     }
                 }
-                
-                
 
             }
             d3Readings.put(SensorName, Values);
@@ -175,12 +172,12 @@ public class D3Store {
         }
         dates.add(dd);
     }
-  
-    public void setAggregation(int Aggregation){
-        this.Aggregation=Aggregation;
+
+    public void setAggregation(int Aggregation) {
+        this.Aggregation = Aggregation;
     }
-    
-    public int getAggregation(){
+
+    public int getAggregation() {
         return Aggregation;
     }
 }
