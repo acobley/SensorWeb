@@ -158,6 +158,7 @@ public class D3Store {
         }
         }catch(Exception et){
             setError(et.toString());
+            System.out.println("Error getteing d3 readings "+et);
             et.printStackTrace();
         }
         return d3Readings;
