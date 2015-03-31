@@ -31,7 +31,17 @@ public class D3Store {
     Map<Date, Map<String, UDTValue>> readings = null;
     private int Aggregation=1;
 
-    public void Device() {
+    private String Error="";
+    public void setError(String Error){
+        this.Error=this.Error+" : "+Error;
+    }
+    
+    public String getError()
+    {
+        return Error;
+    }
+    
+        public void Device() {
 
     }
 
