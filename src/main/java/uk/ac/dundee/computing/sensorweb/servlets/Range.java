@@ -9,6 +9,7 @@ import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.Session;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.text.ParseException;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
@@ -22,6 +23,7 @@ import javax.servlet.http.HttpServletResponse;
 import uk.ac.dundee.computing.aec.instagrim.lib.CassandraHosts;
 import uk.ac.dundee.computing.aec.sensorweb.lib.Convertors;
 import uk.ac.dundee.computing.aec.sensorweb.models.DeviceModel;
+import uk.ac.dundee.computing.aec.sensorweb.stores.D3Store;
 import uk.ac.dundee.computing.aec.sensorweb.stores.DeviceStore;
 
 /**
@@ -40,6 +42,7 @@ public class Range extends HttpServlet {
         cluster = CassandraHosts.getCluster();
         session = cluster.newSession();
         CommandsMap.put("JSON", 1);
+        CommandsMap.put("D3", 2);
     }
 
     /**
@@ -54,59 +57,82 @@ public class Range extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         boolean RenderJSON = false;
+        boolean D3 = false;
+        Date Dates[] = new Date[2];
+        int dateCount = 0;
+        String Device = null;
+        int Aggregation = 1;
         String args[] = Convertors.SplitRequestPath(request);
-        if (CommandsMap.containsKey(args[args.length - 1])) {
-            if ((Integer) CommandsMap.get(args[args.length - 1]) == 1) {
-                //Remove the JSON
-                args = Arrays.copyOf(args, args.length - 1);
-                RenderJSON = true;
+        DeviceModel dm = new DeviceModel();
+          dm.setSession(session); //connect to Cassandra;
+
+
+        for (int i = 0; i < args.length; i++) {
+            if (CommandsMap.get(args[i])!=null){
+            switch ((Integer) CommandsMap.get(args[i])) {
+                case 1:
+                    RenderJSON = true;
+                    break;
+                case 2:
+                    D3 = true;
+                    break;
+                default:
+                    break;
+
             }
+            }
+            try {
+                java.util.UUID uuid = Convertors.UUIDFromString(args[i]);
+                Device = args[i];
+            } catch (IllegalArgumentException iLLet) {
+                //We actually don't care, it wasn't a UUID !
+            }
+
+            try {
+                Dates[dateCount] = Convertors.StringToDate(args[i]);
+                dateCount++;
+            } catch (ParseException pEt) {
+                //We actually don't care, it wasn't a date
+            }
+            try {
+                Aggregation = Integer.parseInt(args[i]);
+            } catch (Exception et2) {
+                //We actually don't care,  it wasn't a number
+            }
+
         }
 
-        
-        String Device = args[2];
-        int Aggregation=1;
-        if (Device != null) {
-            DeviceModel dm = new DeviceModel();
-            dm.setSession(session);
+        if (Device != null) {   
             DeviceStore dd = null;
-            int la = args.length;
-            //This really needs rewritten !
-            
-            if (la ==5){
-                   Date EndDate=null;
-                   
-                   try{
-                       EndDate= Convertors.StringToDate(args[4]);
-                       dd = dm.getDeviceRange(Device, args[3], args[4]);
-                   }catch (Exception et){
-                       try{
-                          Aggregation=Integer.parseInt(args[4]);
-                       }catch(Exception et2){
-                           System.out.println("int parse error "+et2);
-                       }
-                       try {
-                       dd = dm.getDeviceRange(Device, args[3]);
-                       }catch(Exception et3){
-                           System.out.println("Date parse errror"+et3);
-                       }
-                   }
-                   
-            } else if (la == 4) {
-                try {
-                    dd = dm.getDeviceRange(Device, args[3]);
-                    }catch(Exception et3){
-                           System.out.println("Date parse errror"+et3);
-                       }
-
-            } else {
-
-                dd = dm.getDevice(Device);
+            D3Store d3S = null;
+            if (D3==false){
+                switch (dateCount){
+                    case 1:dd=dm.getDeviceRange(Device, Dates[0]);
+                        break;
+                    case 2:dd=dm.getDeviceRange(Device, Dates[0],Dates[1]);
+                        break;
+                    default:
+                       break;
+                }
+            }else{
+                switch (dateCount){
+                    case 1:d3S=dm.getD3Range(Device, Dates[0]);
+                        break;
+                    case 2:d3S=dm.getD3Range(Device, Dates[0],Dates[1]);
+                        break;
+                    default:
+                       break;
+                }
             }
-            
+
             if (RenderJSON == true) {
-                dd.setAggregation(Aggregation);
-                request.setAttribute("Data", dd);
+                
+                if (D3==false)
+                    request.setAttribute("Data", dd);
+                else {
+                    d3S.setAggregation(Aggregation);
+                    request.setAttribute("Data", d3S);
+                }
                 RequestDispatcher rdjson = request.getRequestDispatcher("/RenderJson");
                 rdjson.forward(request, response);
             } else {
@@ -116,7 +142,7 @@ public class Range extends HttpServlet {
                 request.setAttribute("Path", request.getRequestURI());
                 rd.forward(request, response);
             }
-        } else {
+        } else { //Shouldn't get here, but if it does, go back to the index.
             RequestDispatcher rd = request.getRequestDispatcher("/index.jsp");
             request.setAttribute("Path", request.getRequestURI());
             rd.forward(request, response);

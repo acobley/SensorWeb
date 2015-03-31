@@ -10,8 +10,6 @@ import com.datastax.driver.core.UserType;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
-
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -21,8 +19,7 @@ import java.util.UUID;
  *
  * @author andycobley
  */
-public class DeviceStore {
-
+public class D3Store {
     private UUID DeviceName = null;
     private Map<String, String> meta = null;
     private List<Date> dates = null;
@@ -96,46 +93,63 @@ public class DeviceStore {
         return lst;
     }
 
+    
     //get readings map of <Date, <Sensor Name, <Type, Value>>>
-    public Map<Date, List<Map<String, Map<String, String>>>> getReadings() {
-        Map<Date, List<Map<String, Map<String, String>>>> reading = new HashMap<Date, List<Map<String, Map<String, String>>>>();
-        for (Map.Entry<Date, Map<String, UDTValue>> entry : readings.entrySet()) {
-            Date InsertionDate = entry.getKey();
-            List<Map<String, Map<String, String>>> lst = new LinkedList<Map<String, Map<String, String>>>();
-            Map<String, UDTValue> sensorMap = entry.getValue();
-            for (Map.Entry<String, UDTValue> sensorentry : sensorMap.entrySet()) {
-                String SensorName = sensorentry.getKey();
-                UDTValue sensor = sensorentry.getValue();
-                Map<String, String> SensorReading = new HashMap<String, String>();
-                float fValue = sensor.getFloat("fValue");
-                String sfValue = Float.toString(fValue);
+    //in a form for D3 to use, miss out Strings
+    //Map of Sensor:[{Date:D,Value:V}]
+    public Map<String, List<SensorValue>> getD3Readings() {
+        int numMinutes=Aggregation;
+        Map<String, List<SensorValue>> d3Readings = new HashMap<String, List<SensorValue>>();
 
-                int iValue = sensor.getInt("iValue");
-                String siValue = Integer.toString(iValue);
-                String sValue = sensor.getString("sValue");
-                if (fValue != 0) {
-                    SensorReading.put("fValue", sfValue);
+        for (Map.Entry<String, UDTValue> sensornameentry : sensorMap.entrySet()) {
+            String SensorName = sensornameentry.getKey();
+            List<SensorValue> Values = new LinkedList<SensorValue>();
+            int currentMin=-1;
+            float fTotal=(float)0.0;
+            int num=0;
+            int minCount=0;
+            for (Map.Entry<Date, Map<String, UDTValue>> entry : readings.entrySet()) {
+                Date InsertionDate = entry.getKey();
+                Calendar cl = Calendar.getInstance();
+                cl.setTime(InsertionDate);
+                int minute     = cl.get(Calendar.MINUTE);
+                Map<String, UDTValue> sensorMap = entry.getValue();
+                UDTValue sensor = sensorMap.get(SensorName);
+                float fValue = sensor.getFloat("fValue");
+                
+                if (fValue == 0) {
+                    int iValue = sensor.getInt("iValue");
+                    fValue=(float)iValue;
                 }
-                if (iValue != 0) {
-                    SensorReading.put("iValue", siValue);
+                if (currentMin==-1){
+                    fTotal=fTotal+fValue;
+                    num++;
+                    currentMin=minute;
+                }else if (currentMin==minute){
+                    fTotal=fTotal+fValue;
+                    num++;
+                }else{
+                    minCount++;
+                    if (minCount>=numMinutes){
+                    fValue=fTotal/num;
+                    num=0;
+                    minCount=0;
+                    fTotal=(float)0.0;
+                    String sValue = Float.toString(fValue);
+                SensorValue sv = new SensorValue();
+                sv.create(InsertionDate, sValue);
+                Values.add(sv);
+                    }
                 }
-                if (sValue != null) {
-                    SensorReading.put("sValue", sValue);
-                }
-                Map<String, Map<String, String>> Sensor = new HashMap<String, Map<String, String>>();
-                Sensor.put(SensorName, SensorReading);
-                lst.add(Sensor);
+                
+                
 
             }
-            reading.put(InsertionDate, lst);
+            d3Readings.put(SensorName, Values);
         }
-        return reading;
+
+        return d3Readings;
     }
-
-    
-    
-    
-
 
     public void addReading(Date insertDate, Map<String, UDTValue> Sensors) {
         if (readings == null) {
@@ -151,11 +165,7 @@ public class DeviceStore {
         }
         dates.add(dd);
     }
-
-    public List<Date> getDates() {
-        return dates;
-    }
-    
+  
     public void setAggregation(int Aggregation){
         this.Aggregation=Aggregation;
     }
@@ -163,5 +173,4 @@ public class DeviceStore {
     public int getAggregation(){
         return Aggregation;
     }
-
 }
