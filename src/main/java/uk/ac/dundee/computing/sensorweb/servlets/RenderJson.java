@@ -101,6 +101,7 @@ public class RenderJson extends HttpServlet {
                         rt = meth.invoke(Value);
                     } catch (Exception et) {
                         System.out.println("Cat't process this reflection invocation" + et);
+                        System.out.println("Cause "+et.getCause());
                         continue;
                     }
                     Class cl = rt.getClass();
