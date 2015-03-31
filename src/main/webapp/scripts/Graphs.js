@@ -53,7 +53,7 @@ function drawGraph(Data,Title) {
 }
 
 function getGraphsData() {
-    d3.json(path + "/JSON/D3", function (error, data) {
+    d3.json(path + "/60/JSON/D3", function (error, data) {
         if (error) {
             console.log(error);
         } else {
