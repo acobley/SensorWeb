@@ -64,22 +64,21 @@ public class Range extends HttpServlet {
         int Aggregation = 1;
         String args[] = Convertors.SplitRequestPath(request);
         DeviceModel dm = new DeviceModel();
-          dm.setSession(session); //connect to Cassandra;
-
+        dm.setSession(session); //connect to Cassandra;
 
         for (int i = 0; i < args.length; i++) {
-            if (CommandsMap.get(args[i])!=null){
-            switch ((Integer) CommandsMap.get(args[i])) {
-                case 1:
-                    RenderJSON = true;
-                    break;
-                case 2:
-                    D3 = true;
-                    break;
-                default:
-                    break;
+            if (CommandsMap.get(args[i]) != null) {
+                switch ((Integer) CommandsMap.get(args[i])) {
+                    case 1:
+                        RenderJSON = true;
+                        break;
+                    case 2:
+                        D3 = true;
+                        break;
+                    default:
+                        break;
 
-            }
+                }
             }
             try {
                 java.util.UUID uuid = Convertors.UUIDFromString(args[i]);
@@ -102,34 +101,38 @@ public class Range extends HttpServlet {
 
         }
 
-        if (Device != null) {   
+        if (Device != null) {
             DeviceStore dd = null;
             D3Store d3S = null;
-            if (D3==false){
-                switch (dateCount){
-                    case 1:dd=dm.getDeviceRange(Device, Dates[0]);
+            if (D3 == false) {
+                switch (dateCount) {
+                    case 1:
+                        dd = dm.getDeviceRange(Device, Dates[0]);
                         break;
-                    case 2:dd=dm.getDeviceRange(Device, Dates[0],Dates[1]);
+                    case 2:
+                        dd = dm.getDeviceRange(Device, Dates[0], Dates[1]);
                         break;
                     default:
-                       break;
+                        break;
                 }
-            }else{
-                switch (dateCount){
-                    case 1:d3S=dm.getD3Range(Device, Dates[0]);
+            } else {
+                switch (dateCount) {
+                    case 1:
+                        d3S = dm.getD3Range(Device, Dates[0]);
                         break;
-                    case 2:d3S=dm.getD3Range(Device, Dates[0],Dates[1]);
+                    case 2:
+                        d3S = dm.getD3Range(Device, Dates[0], Dates[1]);
                         break;
                     default:
-                       break;
+                        break;
                 }
             }
 
             if (RenderJSON == true) {
-                
-                if (D3==false)
+
+                if (D3 == false) {
                     request.setAttribute("Data", dd);
-                else {
+                } else {
                     d3S.setAggregation(Aggregation);
                     request.setAttribute("Data", d3S);
                 }

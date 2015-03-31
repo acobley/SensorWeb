@@ -90,17 +90,17 @@ public class RenderJson extends HttpServlet {
 
                 if (mName.startsWith("get") == true) {
                     String Name = mName.replaceFirst("get", "");
-                	 //Class pvec[] = m.getParameterTypes(); //Get the Parameter types
+                    //Class pvec[] = m.getParameterTypes(); //Get the Parameter types
                     //for (int j = 0; j < pvec.length; j++)
                     //   System.out.println("param #" + j + " " + pvec[j]);
                     //System.out.println(mName+" return type = " +  m.getReturnType());
                     Class partypes[] = new Class[0];
                     Method meth = c.getMethod(mName, partypes);
-                    Object rt=null;
+                    Object rt = null;
                     try {
                         rt = meth.invoke(Value);
-                    }catch(Exception et){
-                        System.out.println("Cat't process this reflection invocation" +et );
+                    } catch (Exception et) {
+                        System.out.println("Cat't process this reflection invocation" + et);
                         continue;
                     }
                     Class cl = rt.getClass();

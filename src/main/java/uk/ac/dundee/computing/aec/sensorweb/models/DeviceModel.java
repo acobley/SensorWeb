@@ -84,20 +84,20 @@ public class DeviceModel {
         return dd;
     }
 
-    public DeviceStore getDevice(String DeviceName, String InsertionTime) throws ParseException{
+    public DeviceStore getDevice(String DeviceName, String InsertionTime) throws ParseException {
         DeviceStore dd = null;
         String DeviceQuery = "select * from sensorsync.sensors where name=? and insertion_time=?";
         PreparedStatement ps = session.prepare(DeviceQuery);
         ResultSet rs = null;
         BoundStatement boundStatement = new BoundStatement(ps);
-        
-        Date dt=Convertors.StringToDate(InsertionTime);
+
+        Date dt = Convertors.StringToDate(InsertionTime);
         rs = session.execute(boundStatement.bind(java.util.UUID.fromString(DeviceName), dt));
         if (rs.isExhausted()) {
             System.out.println("No Devices");
             return null;
         } else {
-            
+
             dd = new DeviceStore();
             //dd.setReadingType(SensorReadingType);
             for (Row row : rs) {
@@ -105,12 +105,12 @@ public class DeviceModel {
                 dd.setMeta(row.getMap("metadata", String.class, String.class));
                 dd.addDate(row.getDate("insertion_time"));
                 //http://www.datastax.com/documentation/developer/java-driver/2.1/java-driver/reference/udtApi.html
-                dd.setSensors(row.getMap("reading",String.class, UDTValue.class));
+                dd.setSensors(row.getMap("reading", String.class, UDTValue.class));
             }
         }
         return dd;
     }
-    
+
     //get readings for a date > than Insertion Time
     public DeviceStore getDeviceRange(String DeviceName, Date InsertionTime) {
         DeviceStore dd = null;
@@ -119,13 +119,13 @@ public class DeviceModel {
         ResultSet rs = null;
         BoundStatement boundStatement = new BoundStatement(ps);
         boundStatement.setFetchSize(1000);
-        
+
         rs = session.execute(boundStatement.bind(java.util.UUID.fromString(DeviceName), InsertionTime));
         if (rs.isExhausted()) {
             System.out.println("No Devices");
             return null;
         } else {
-            
+
             dd = new DeviceStore();
             //dd.setReadingType(SensorReadingType);
             for (Row row : rs) {
@@ -133,13 +133,14 @@ public class DeviceModel {
                 dd.setMeta(row.getMap("metadata", String.class, String.class));
                 dd.addDate(row.getDate("insertion_time"));
                 //http://www.datastax.com/documentation/developer/java-driver/2.1/java-driver/reference/udtApi.html
-                dd.setSensors(row.getMap("reading",String.class, UDTValue.class));
-                dd.addReading(row.getDate("insertion_time"), row.getMap("reading",String.class, UDTValue.class));
+                dd.setSensors(row.getMap("reading", String.class, UDTValue.class));
+                dd.addReading(row.getDate("insertion_time"), row.getMap("reading", String.class, UDTValue.class));
 
             }
         }
         return dd;
     }
+
     public DeviceStore getDeviceRange(String DeviceName, Date StartDate, Date EndDate) {
         DeviceStore dd = null;
         String DeviceQuery = "select * from sensorsync.sensors where name=? and insertion_time>? and insertion_time<? order by insertion_time desc";
@@ -153,7 +154,7 @@ public class DeviceModel {
             System.out.println("No Devices");
             return null;
         } else {
-            
+
             dd = new DeviceStore();
             rs.getAvailableWithoutFetching();
             //dd.setReadingType(SensorReadingType);
@@ -162,16 +163,14 @@ public class DeviceModel {
                 dd.setMeta(row.getMap("metadata", String.class, String.class));
                 dd.addDate(row.getDate("insertion_time"));
                 //http://www.datastax.com/documentation/developer/java-driver/2.1/java-driver/reference/udtApi.html
-                dd.setSensors(row.getMap("reading",String.class, UDTValue.class)); //Name of sensor and reading
-                dd.addReading(row.getDate("insertion_time"), row.getMap("reading",String.class, UDTValue.class));
+                dd.setSensors(row.getMap("reading", String.class, UDTValue.class)); //Name of sensor and reading
+                dd.addReading(row.getDate("insertion_time"), row.getMap("reading", String.class, UDTValue.class));
             }
         }
         return dd;
     }
-    
-    
-    
-        //get readings for a date > than Insertion Time
+
+    //get readings for a date > than Insertion Time
     public D3Store getD3Range(String DeviceName, Date InsertionTime) {
         D3Store dd = null;
         String DeviceQuery = "select * from sensorsync.sensors where name=? and insertion_time>=? order by insertion_time desc";
@@ -179,13 +178,13 @@ public class DeviceModel {
         ResultSet rs = null;
         BoundStatement boundStatement = new BoundStatement(ps);
         boundStatement.setFetchSize(1000);
-       
-        rs = session.execute(boundStatement.bind(java.util.UUID.fromString(DeviceName),InsertionTime));
+
+        rs = session.execute(boundStatement.bind(java.util.UUID.fromString(DeviceName), InsertionTime));
         if (rs.isExhausted()) {
             System.out.println("No Devices");
             return null;
         } else {
-            
+
             dd = new D3Store();
             //dd.setReadingType(SensorReadingType);
             for (Row row : rs) {
@@ -193,13 +192,14 @@ public class DeviceModel {
                 dd.setMeta(row.getMap("metadata", String.class, String.class));
                 dd.addDate(row.getDate("insertion_time"));
                 //http://www.datastax.com/documentation/developer/java-driver/2.1/java-driver/reference/udtApi.html
-                dd.setSensors(row.getMap("reading",String.class, UDTValue.class));
-                dd.addReading(row.getDate("insertion_time"), row.getMap("reading",String.class, UDTValue.class));
+                dd.setSensors(row.getMap("reading", String.class, UDTValue.class));
+                dd.addReading(row.getDate("insertion_time"), row.getMap("reading", String.class, UDTValue.class));
 
             }
         }
         return dd;
     }
+
     public D3Store getD3Range(String DeviceName, Date StartDate, Date EndDate) {
         D3Store dd = null;
         String DeviceQuery = "select * from sensorsync.sensors where name=? and insertion_time>? and insertion_time<? order by insertion_time desc";
@@ -207,13 +207,13 @@ public class DeviceModel {
         ResultSet rs = null;
         BoundStatement boundStatement = new BoundStatement(ps);
         boundStatement.setFetchSize(1000);
-     
-        rs = session.execute(boundStatement.bind(java.util.UUID.fromString(DeviceName), StartDate,EndDate));
+
+        rs = session.execute(boundStatement.bind(java.util.UUID.fromString(DeviceName), StartDate, EndDate));
         if (rs.isExhausted()) {
             System.out.println("No Devices");
             return null;
         } else {
-            
+
             dd = new D3Store();
             rs.getAvailableWithoutFetching();
             //dd.setReadingType(SensorReadingType);
@@ -221,8 +221,8 @@ public class DeviceModel {
                 dd.setName(row.getUUID("name"));
                 dd.setMeta(row.getMap("metadata", String.class, String.class));
                 //http://www.datastax.com/documentation/developer/java-driver/2.1/java-driver/reference/udtApi.html
-                dd.setSensors(row.getMap("reading",String.class, UDTValue.class)); //Name of sensor and reading
-                dd.addReading(row.getDate("insertion_time"), row.getMap("reading",String.class, UDTValue.class));
+                dd.setSensors(row.getMap("reading", String.class, UDTValue.class)); //Name of sensor and reading
+                dd.addReading(row.getDate("insertion_time"), row.getMap("reading", String.class, UDTValue.class));
             }
         }
         return dd;
