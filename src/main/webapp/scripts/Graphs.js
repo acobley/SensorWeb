@@ -19,7 +19,7 @@ function drawGraph(Data,Title) {
     });
     var padding=30;
     var yscale = d3.scale.linear()
-            .domain([ymin,ymax])
+            .domain([ymin-10,ymax])
             .range([ Height-padding,padding]);
     var xscale = d3.scale.linear()
             .domain([0, Datalength])
@@ -53,7 +53,7 @@ function drawGraph(Data,Title) {
 }
 
 function getGraphsData() {
-    d3.json(path + "/60/JSON/D3", function (error, data) {
+    d3.json(path + "/1/JSON/D3", function (error, data) {
         if (error) {
             console.log(error);
         } else {

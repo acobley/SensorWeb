@@ -7,10 +7,13 @@ package uk.ac.dundee.computing.aec.sensorweb.models;
 
 import com.datastax.driver.core.BoundStatement;
 import com.datastax.driver.core.Cluster;
+import static com.datastax.driver.core.DataType.timestamp;
+import com.datastax.driver.core.LocalDate;
 import com.datastax.driver.core.PreparedStatement;
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Row;
 import com.datastax.driver.core.Session;
+import static com.datastax.driver.core.TypeCodec.timestamp;
 import com.datastax.driver.core.UDTValue;
 import com.datastax.driver.core.UserType;
 import java.text.ParseException;
@@ -78,7 +81,10 @@ public class DeviceModel {
             for (Row row : rs) {
                 dd.setName(row.getUUID("name"));
                 dd.setMeta(row.getMap("metadata", String.class, String.class));
-                dd.addDate(row.getDate("insertion_time"));
+                //LocalDate cdate=row.getDate("insertion_time");
+                Date cdate=row.getTimestamp("insertion_time");
+                //dd.addDate(new Date(cdate.getMillisSinceEpoch()));
+                dd.addDate(cdate);
             }
         }
         return dd;
@@ -103,7 +109,10 @@ public class DeviceModel {
             for (Row row : rs) {
                 dd.setName(row.getUUID("name"));
                 dd.setMeta(row.getMap("metadata", String.class, String.class));
-                dd.addDate(row.getDate("insertion_time"));
+                //LocalDate cdate=row.getDate("insertion_time");
+                Date cdate=row.getTimestamp("insertion_time");
+                //dd.addDate(new Date(cdate.getMillisSinceEpoch()));
+                dd.addDate(cdate);
                 //http://www.datastax.com/documentation/developer/java-driver/2.1/java-driver/reference/udtApi.html
                 dd.setSensors(row.getMap("reading", String.class, UDTValue.class));
             }
@@ -131,10 +140,14 @@ public class DeviceModel {
             for (Row row : rs) {
                 dd.setName(row.getUUID("name"));
                 dd.setMeta(row.getMap("metadata", String.class, String.class));
-                dd.addDate(row.getDate("insertion_time"));
+                 //LocalDate cdate=row.getDate("insertion_time");
+                Date cdate=row.getTimestamp("insertion_time");
+                dd.addDate(cdate);
+                //dd.addDate(new Date(cdate.getMillisSinceEpoch()));
+                //dd.addDate(cdate);
                 //http://www.datastax.com/documentation/developer/java-driver/2.1/java-driver/reference/udtApi.html
                 dd.setSensors(row.getMap("reading", String.class, UDTValue.class));
-                dd.addReading(row.getDate("insertion_time"), row.getMap("reading", String.class, UDTValue.class));
+                dd.addReading(cdate, row.getMap("reading", String.class, UDTValue.class));
 
             }
         }
@@ -161,10 +174,13 @@ public class DeviceModel {
             for (Row row : rs) {
                 dd.setName(row.getUUID("name"));
                 dd.setMeta(row.getMap("metadata", String.class, String.class));
-                dd.addDate(row.getDate("insertion_time"));
+                //LocalDate cdate=row.getDate("insertion_time");
+                Date cdate=row.getTimestamp("insertion_time");
+                //dd.addDate(new Date(cdate.getMillisSinceEpoch()));
+                dd.addDate(cdate);
                 //http://www.datastax.com/documentation/developer/java-driver/2.1/java-driver/reference/udtApi.html
                 dd.setSensors(row.getMap("reading", String.class, UDTValue.class)); //Name of sensor and reading
-                dd.addReading(row.getDate("insertion_time"), row.getMap("reading", String.class, UDTValue.class));
+                dd.addReading(cdate, row.getMap("reading", String.class, UDTValue.class));
             }
         }
         return dd;
@@ -190,10 +206,13 @@ public class DeviceModel {
             for (Row row : rs) {
                 dd.setName(row.getUUID("name"));
                 dd.setMeta(row.getMap("metadata", String.class, String.class));
-                dd.addDate(row.getDate("insertion_time"));
+                //LocalDate cdate=row.getDate("insertion_time");
+                Date cdate=row.getTimestamp("insertion_time");
+                //dd.addDate(new Date(cdate.getMillisSinceEpoch()));
+                dd.addDate(cdate);
                 //http://www.datastax.com/documentation/developer/java-driver/2.1/java-driver/reference/udtApi.html
                 dd.setSensors(row.getMap("reading", String.class, UDTValue.class));
-                dd.addReading(row.getDate("insertion_time"), row.getMap("reading", String.class, UDTValue.class));
+                dd.addReading(cdate, row.getMap("reading", String.class, UDTValue.class));
 
             }
         }
@@ -222,7 +241,12 @@ public class DeviceModel {
                 dd.setMeta(row.getMap("metadata", String.class, String.class));
                 //http://www.datastax.com/documentation/developer/java-driver/2.1/java-driver/reference/udtApi.html
                 dd.setSensors(row.getMap("reading", String.class, UDTValue.class)); //Name of sensor and reading
-                dd.addReading(row.getDate("insertion_time"), row.getMap("reading", String.class, UDTValue.class));
+               //LocalDate cdate=row.getDate("insertion_time");
+                Date cdate=row.getTimestamp("insertion_time");
+                //dd.addDate(new Date(cdate.getMillisSinceEpoch()));
+                //dd.addDate(cdate);
+          
+                dd.addReading(cdate, row.getMap("reading", String.class, UDTValue.class));
             }
         }
         return dd;

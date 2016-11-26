@@ -20,7 +20,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import uk.ac.dundee.computing.aec.instagrim.lib.CassandraHosts;
+import uk.ac.dundee.computing.aec.sensorweb.lib.CassandraHosts;
 import uk.ac.dundee.computing.aec.sensorweb.lib.Convertors;
 import uk.ac.dundee.computing.aec.sensorweb.models.DeviceModel;
 import uk.ac.dundee.computing.aec.sensorweb.stores.D3Store;
