@@ -19,7 +19,7 @@ function drawGraph(Data,Title) {
     });
     var padding=30;
     var yscale = d3.scale.linear()
-            .domain([ymin-10,ymax])
+            .domain([ymin-2s,ymax])
             .range([ Height-padding,padding]);
     var xscale = d3.scale.linear()
             .domain([0, Datalength])

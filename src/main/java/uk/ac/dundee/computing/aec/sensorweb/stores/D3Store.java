@@ -10,6 +10,7 @@ import com.datastax.driver.core.UserType;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -34,16 +35,46 @@ public class D3Store {
 
     private String Error = "";
 
+    public D3Store() {
+
+    }
+
+    public int AverageMinutesBetweenReadings() {
+        int Average = 1;
+        int SumMinutes = 0;
+        int NumMinutes = 0;
+        int LastTime=0;
+        Iterator<Date> it = dates.iterator();
+        Calendar cl = Calendar.getInstance();
+        while (it.hasNext()) {
+
+            cl.setTime(it.next());
+            int diff=0;
+            int minute = cl.get(Calendar.MINUTE);
+            if (minute>LastTime){
+                diff = minute-LastTime;
+            }else{
+                diff=60-minute+LastTime;
+            }
+            
+            SumMinutes = SumMinutes + diff;
+            NumMinutes++;
+            LastTime=minute;
+        }
+        Average = (int) SumMinutes / NumMinutes;
+        if (Average < 1) {
+            Average = 1;
+        }
+        return Average;
+
+    }
+
     public void setError(String Error) {
         this.Error = this.Error + " : " + Error;
     }
 
     public String getError() {
         return Error;
-    }
-
-    public void Device() {
-
     }
 
     public void setName(UUID Name) {
@@ -68,6 +99,7 @@ public class D3Store {
         return meta;
     }
 
+    //I think this was removed on purpose (gt replaced get)
     public Map gtSensors() {
         return sensorMap;
     }
@@ -108,58 +140,74 @@ public class D3Store {
     //Map of Sensor:[{Date:D,Value:V}]
     public Map<String, List<SensorValue>> getD3Readings() {
         int numMinutes = Aggregation;
-        String SensorName =null;
+        String SensorName = null;
+        int Average = AverageMinutesBetweenReadings();
         Map<String, List<SensorValue>> d3Readings = new HashMap<String, List<SensorValue>>();
         try {
-        
 
-        for (Map.Entry<String, UDTValue> sensornameentry : sensorMap.entrySet()) {
-            SensorName = sensornameentry.getKey();
-            List<SensorValue> Values = new LinkedList<SensorValue>();
-            int currentMin = -1;
-            float fTotal = (float) 0.0;
-            int num = 0;
-            int minCount = 0;
-            for (Map.Entry<Date, Map<String, UDTValue>> entry : readings.entrySet()) {
-                Date InsertionDate = entry.getKey();
-                Calendar cl = Calendar.getInstance();
-                cl.setTime(InsertionDate);
-                int minute = cl.get(Calendar.MINUTE);
-                Map<String, UDTValue> sensorMap = entry.getValue();
-                UDTValue sensor = sensorMap.get(SensorName);
-                float fValue = sensor.getFloat("fValue");
+            for (Map.Entry<String, UDTValue> sensornameentry : sensorMap.entrySet()) {
+                SensorName = sensornameentry.getKey();
+                List<SensorValue> Values = new LinkedList<SensorValue>();
+                int currentMin = -1; //This is the current minute, not minimum
+                float fTotal = (float) 0.0;
+                int num = 0;
+                int minCount = 0;
+                for (Map.Entry<Date, Map<String, UDTValue>> entry : readings.entrySet()) {
+                    if (Aggregation > Average) {
+                        Date InsertionDate = entry.getKey();
+                        Calendar cl = Calendar.getInstance();
+                        cl.setTime(InsertionDate);
+                        int minute = cl.get(Calendar.MINUTE);
+                        Map<String, UDTValue> sensorMap = entry.getValue();
+                        UDTValue sensor = sensorMap.get(SensorName);
+                        float fValue = sensor.getFloat("fValue");
 
-                if (fValue == 0) {
-                    int iValue = sensor.getInt("iValue");
-                    fValue = (float) iValue;
-                }
-                if (currentMin == -1) {
-                    fTotal = fTotal + fValue;
-                    num++;
-                    currentMin = minute;
-                } else if (currentMin == minute) {
-                    fTotal = fTotal + fValue;
-                    num++;
-                } else {
-                    minCount++;
-                    if (minCount >= numMinutes) {
-                        fValue = fTotal / num;
-                        num = 0;
-                        minCount = 0;
-                        fTotal = (float) 0.0;
+                        if (fValue == 0) {
+                            int iValue = sensor.getInt("iValue");
+                            fValue = (float) iValue;
+                        }
+                        if (currentMin == -1) {
+                            fTotal = fTotal + fValue;
+                            num++;
+                            currentMin = minute;
+                        } else if (currentMin == minute) {
+                            fTotal = fTotal + fValue;
+                            num++;
+                        } else {
+                            minCount++;
+                            if (minCount >= numMinutes) {
+                                fValue = fTotal / num;
+                                num = 0;
+                                minCount = 0;
+                                fTotal = (float) 0.0;
+                                String sValue = Float.toString(fValue);
+                                SensorValue sv = new SensorValue();
+                                sv.create(InsertionDate, sValue);
+                                Values.add(sv);
+                            }
+                        }
+                    } else { //Don't do aggregation
+                        Date InsertionDate = entry.getKey();
+                       
+                        Map<String, UDTValue> sensorMap = entry.getValue();
+                        UDTValue sensor = sensorMap.get(SensorName);
+                        float fValue = sensor.getFloat("fValue");
+
+                        if (fValue == 0) {
+                            int iValue = sensor.getInt("iValue");
+                            fValue = (float) iValue;
+                        }
                         String sValue = Float.toString(fValue);
                         SensorValue sv = new SensorValue();
                         sv.create(InsertionDate, sValue);
                         Values.add(sv);
                     }
                 }
-
+                d3Readings.put(SensorName, Values);
             }
-            d3Readings.put(SensorName, Values);
-        }
-        }catch(Exception et){
+        } catch (Exception et) {
             setError(et.toString());
-            System.out.println("Error getteing d3 readings "+et+" :" +SensorName);
+            System.out.println("Error getteing d3 readings " + et + " :" + SensorName);
             et.printStackTrace();
         }
         return d3Readings;

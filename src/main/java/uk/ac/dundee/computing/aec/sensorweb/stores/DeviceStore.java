@@ -34,9 +34,9 @@ public class DeviceStore {
     Map<Date, Map<String, UDTValue>> readings = null;
     private int Aggregation=1;
 
-    public void Device() {
-
-    }
+   public DeviceStore(){
+       
+   }
 
     public void setName(UUID Name) {
         DeviceName = Name;

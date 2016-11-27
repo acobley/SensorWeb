@@ -5,18 +5,19 @@
 <%@page import="java.util.List"%>
 <%@page import="java.util.Map"%>
 <%@page import="java.util.Iterator"%>
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
+
 <!DOCTYPE html>
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ page import="uk.ac.dundee.computing.aec.sensorweb.stores.*" %>
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>Sensor Web</title>
-        <link rel="stylesheet" type="text/css" href="/SensorWeb/Styles.css" />
-        <script type="text/javascript" src="http://code.jquery.com/jquery-2.1.3.min.js"></script>
-        <script type="text/javascript" src="/SensorWeb/scripts/preview.js"></script>
-        <script type="text/javascript" src="/SensorWeb/scripts/Graphs.js"></script>
-        <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+        <link rel="stylesheet" type="text/css" href="/SensorWeb/Styles.css" ></script>
+        <script type="text/javascript" src="/SensorWeb/scripts/jquery-2.1.4.min.js"></script>
+        <script type="text/javascript" src="/SensorWeb/scripts/preview.js" ></script>
+        <script type="text/javascript" src="/SensorWeb/scripts/Graphs.js" ></script>
+        <script type="text/javascript" src="/SensorWeb/scripts/d3.v3.min.js" charset="utf-8" ></script>
 
     </head>
     <body>
