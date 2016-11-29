@@ -17,19 +17,26 @@ function drawGraph(Data,Title) {
     var ymax = d3.max(Data, function (d) {
         return parseFloat(d.value, 10);
     });
+    
+    var mindate=d3.min(Data,function(d){
+        return new Date(d.date);
+    });
+    var maxdate=d3.max(Data,function(d){
+        return new Date(d.date);
+    });
     var padding=30;
     var yscale = d3.scale.linear()
             .domain([ymin-2,ymax])
             .range([ Height-padding,padding]);
     var xscale = d3.scale.linear()
-            .domain([0, Datalength])
-            .range([padding, Width-1.5*padding]);
+            .domain([mindate, maxdate])
+            .range([padding, Width-2*padding]);
     var circles = svg.selectAll("circle").data(Data).enter()
             .append("circle");
-    var xAxis=d3.svg.axis().scale(xscale).orient("bottom").ticks(5);
-    var yAxis=d3.svg.axis().scale(yscale).orient("left").ticks(5);
+    var xAxis=d3.svg.axis().orient("bottom").scale(xscale).ticks(5);
+    var yAxis=d3.svg.axis().orient("left").scale(yscale).ticks(5);
     circles.attr("cx", function (d, i) {
-        return xscale(i);
+        return xscale(new Date(d.date));
     }).attr("cy", function (d, i) {
         cy=parseFloat(d.value, 10);
         return yscale(cy);
@@ -37,7 +44,7 @@ function drawGraph(Data,Title) {
         return 2;
     });
      svg.append("g").attr("class","axis")
-            .attr("transform", "translate(0," + (Height - padding) + ")")
+            .attr("transform", "translate("+padding + "0)")
             .call(xAxis);
      svg.append("g").attr("class","axis")
             .attr("transform","translate("+1.5*padding+",0)")
