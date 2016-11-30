@@ -6,12 +6,12 @@
 
 
 function drawGraph(Data, Title) {
-    Width = 800;
-    Height = 400;
+    Width = 500;
+    Height = 200;
     var padding = 50;
 
     var Datalength = Data.length;
-    svg = d3.select("#Graphs").append("svg").attr("width", Width).attr("Height", Height);
+    svg = d3.select("#Graphs").append("svg").attr("width", Width).attr("height", Height);
 
     var ymin = d3.min(Data, function (d) {
         return parseFloat(d.value, 10);
@@ -28,7 +28,7 @@ function drawGraph(Data, Title) {
     });
 
     var yscale = d3.scale.linear()
-            .domain([ymin - 10, ymax])
+            .domain([ymin - 1, ymax])
             .range([Height - padding, padding]);
     var xscale = d3.time.scale()
             .domain([mindate, maxdate])
@@ -46,7 +46,7 @@ function drawGraph(Data, Title) {
         return 1;
     });
     svg.append("g").attr("class", "axis")
-            .attr("transform", "translate(0," + (2 * padding) + ")")
+            .attr("transform", "translate(0," + (Height- padding) + ")")
             .call(xAxis);
 
     svg.append("g").attr("class", "axis")

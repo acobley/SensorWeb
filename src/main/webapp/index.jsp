@@ -63,7 +63,7 @@
             </div>
         </nav>
         <article>
-            <div id="Graphs">
+
             <%
                 String Path = (String) request.getAttribute("Path");
                 boolean isRange = false;
@@ -77,7 +77,10 @@
                 if (Device != null) {
             %>
             <h2>Device <a href="/SensorWeb/Device/<%=Device.getName()%>"   ><%=Device.getName()%></a></h2>
-                <%
+                        <div id="Graphs">
+            </div>
+            <div id="SensorDates">    
+            <%
                     Map<String, String> meta = Device.getMeta();
                     if (meta != null) {
                         for (Map.Entry<String, String> entry : meta.entrySet()) {
@@ -156,6 +159,7 @@
                     }
                 }
             %>
+            </div>
         </article>
     </body>
 </html>
