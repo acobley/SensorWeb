@@ -68,7 +68,7 @@ public class DeviceModel {
 
     public DeviceStore getDevice(String DeviceName) {
         DeviceStore dd = null;
-        String DeviceQuery = "select * from sensorsync.sensors where name=? order by insertion_time desc limit 100";
+        String DeviceQuery = "select * from sensorsync.sensors where name=? order by insertion_time desc ";
         PreparedStatement ps = session.prepare(DeviceQuery);
         ResultSet rs = null;
         BoundStatement boundStatement = new BoundStatement(ps);
@@ -244,7 +244,7 @@ public class DeviceModel {
                //LocalDate cdate=row.getDate("insertion_time");
                 Date cdate=row.getTimestamp("insertion_time");
                 //dd.addDate(new Date(cdate.getMillisSinceEpoch()));
-                //dd.addDate(cdate);
+                dd.addDate(cdate);
           
                 dd.addReading(cdate, row.getMap("reading", String.class, UDTValue.class));
             }

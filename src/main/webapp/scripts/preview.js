@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 var path = "/SensorWeb/Devices";
-
+var command="Device"
 function newUUID(){
     $("#UUID").empty();
      $.getJSON("/SensorWeb/UUID", function (data)
@@ -17,6 +17,10 @@ function newUUID(){
 
 function setPath(PATH) {
     path = PATH;
+}
+
+function setCommand(COMMAND){
+    command=COMMAND;
 }
 
 function OnHeadingIn(elem) {

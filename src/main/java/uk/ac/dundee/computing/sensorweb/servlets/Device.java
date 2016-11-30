@@ -35,10 +35,11 @@ public class Device extends HttpServlet {
     private HashMap CommandsMap = new HashMap();
 
     public void init(ServletConfig config) throws ServletException {
-        // TODO Auto-generated method stub
+       
         cluster = CassandraHosts.getCluster();
         session = cluster.newSession();
         CommandsMap.put("JSON", 1);
+        
     }
 
     /**

@@ -1,3 +1,4 @@
+<%@page import="uk.ac.dundee.computing.aec.sensorweb.lib.Convertors"%>
 <%@page import="java.net.URL"%>
 <%@page import="com.datastax.driver.core.UserType"%>
 <%@page import="com.datastax.driver.core.UDTValue"%>
@@ -29,12 +30,14 @@
         <nav>
             <%
                 String PATH = null;
+                String args[]=null;
                 String ServerPath = new URL(request.getScheme(),
                         request.getServerName(),
                         request.getServerPort(), "").toString();
                 int port = request.getServerPort();
                 if (request.getAttribute("Path") != null) {
                     PATH = request.getAttribute("Path").toString();
+                     args= Convertors.SplitFiletype(PATH);
             }
             if (PATH != null) {%>
 
@@ -42,6 +45,7 @@
             <script>
                 $(function () {
                     setPath("<%=ServerPath%><%=PATH%>");
+                    setCommand("<%=args[1]%>");
                 });
 
             </script>
@@ -59,6 +63,7 @@
             </div>
         </nav>
         <article>
+            <div id="Graphs">
             <%
                 String Path = (String) request.getAttribute("Path");
                 boolean isRange = false;

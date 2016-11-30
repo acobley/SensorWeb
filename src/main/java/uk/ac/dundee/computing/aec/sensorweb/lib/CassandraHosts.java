@@ -20,8 +20,8 @@ import java.util.Set;
 public final class CassandraHosts {
 
     private static Cluster cluster;
-    static String Host = "0.0.0.0";  //at least one starting point to talk to
-  //static String Host = "node1";  //at least one starting point to talk to
+    //static String Host = "0.0.0.0";  //at least one starting point to talk to
+    static String Host = "node1";  //at least one starting point to talk to
 
     public CassandraHosts() {
 
@@ -57,8 +57,8 @@ public final class CassandraHosts {
 
     public static Cluster getCluster() {
         System.out.println("getCluster");
-        cluster = Cluster.builder()
-                .addContactPoint(Host).withPort(8081).build();
+        //cluster = Cluster.builder().addContactPoint(Host).withPort(8081).build();
+        cluster = Cluster.builder().addContactPoint(Host).build();
         getHosts(cluster);
         //Keyspaces.SetUpKeySpaces(cluster); Not needed, data is alreay in place
 
