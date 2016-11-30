@@ -47,7 +47,7 @@ public class Days extends HttpServlet {
         CommandsMap.put("D3", 2);
     }
 
-    // /Days/UUID/Count
+    // /Days/Device/Count
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         boolean RenderJSON = false;
@@ -57,6 +57,7 @@ public class Days extends HttpServlet {
         String Device = null;
         String args[] = Convertors.SplitRequestPath(request);
         DeviceModel dm = new DeviceModel();
+        Device = args[2];
         dm.setSession(session); //connect to Cassandra;
         for (int i = 0; i < args.length; i++) {
             if (CommandsMap.get(args[i]) != null) {
@@ -72,12 +73,7 @@ public class Days extends HttpServlet {
 
                 }
             }
-            try {
-                java.util.UUID uuid = Convertors.UUIDFromString(args[i]);
-                Device = args[i];
-            } catch (IllegalArgumentException iLLet) {
-                //We actually don't care, it wasn't a UUID !
-            }
+          
 
             try {
                 Days = Integer.parseInt(args[i]);

@@ -58,7 +58,7 @@ public class DeviceModel {
         } else {
             for (Row row : rs) {
                 DeviceStore dd = new DeviceStore();
-                dd.setName(row.getUUID("name"));
+                dd.setName(row.getString("name"));
                 //System.out.println("Device " + dd.getName());
                 devices.add(dd);
             }
@@ -72,14 +72,14 @@ public class DeviceModel {
         PreparedStatement ps = session.prepare(DeviceQuery);
         ResultSet rs = null;
         BoundStatement boundStatement = new BoundStatement(ps);
-        rs = session.execute(boundStatement.bind(java.util.UUID.fromString(DeviceName)));
+        rs = session.execute(boundStatement.bind(DeviceName));
         if (rs.isExhausted()) {
             System.out.println("No Devices");
             return null;
         } else {
             dd = new DeviceStore();
             for (Row row : rs) {
-                dd.setName(row.getUUID("name"));
+                dd.setName(row.getString("name"));
                 dd.setMeta(row.getMap("metadata", String.class, String.class));
                 //LocalDate cdate=row.getDate("insertion_time");
                 Date cdate=row.getTimestamp("insertion_time");
@@ -98,7 +98,7 @@ public class DeviceModel {
         BoundStatement boundStatement = new BoundStatement(ps);
 
         Date dt = Convertors.StringToDate(InsertionTime);
-        rs = session.execute(boundStatement.bind(java.util.UUID.fromString(DeviceName), dt));
+        rs = session.execute(boundStatement.bind(DeviceName, dt));
         if (rs.isExhausted()) {
             System.out.println("No Devices");
             return null;
@@ -107,7 +107,7 @@ public class DeviceModel {
             dd = new DeviceStore();
             //dd.setReadingType(SensorReadingType);
             for (Row row : rs) {
-                dd.setName(row.getUUID("name"));
+                dd.setName(row.getString("name"));
                 dd.setMeta(row.getMap("metadata", String.class, String.class));
                 //LocalDate cdate=row.getDate("insertion_time");
                 Date cdate=row.getTimestamp("insertion_time");
@@ -138,7 +138,7 @@ public class DeviceModel {
             dd = new DeviceStore();
             //dd.setReadingType(SensorReadingType);
             for (Row row : rs) {
-                dd.setName(row.getUUID("name"));
+                dd.setName(row.getString("name"));
                 dd.setMeta(row.getMap("metadata", String.class, String.class));
                  //LocalDate cdate=row.getDate("insertion_time");
                 Date cdate=row.getTimestamp("insertion_time");
@@ -162,7 +162,7 @@ public class DeviceModel {
         BoundStatement boundStatement = new BoundStatement(ps);
         boundStatement.setFetchSize(1000);
 
-        rs = session.execute(boundStatement.bind(java.util.UUID.fromString(DeviceName), StartDate, EndDate));
+        rs = session.execute(boundStatement.bind(DeviceName, StartDate, EndDate));
         if (rs.isExhausted()) {
             System.out.println("No Devices");
             return null;
@@ -172,7 +172,7 @@ public class DeviceModel {
             rs.getAvailableWithoutFetching();
             //dd.setReadingType(SensorReadingType);
             for (Row row : rs) {
-                dd.setName(row.getUUID("name"));
+                dd.setName(row.getString("name"));
                 dd.setMeta(row.getMap("metadata", String.class, String.class));
                 //LocalDate cdate=row.getDate("insertion_time");
                 Date cdate=row.getTimestamp("insertion_time");
@@ -195,7 +195,7 @@ public class DeviceModel {
         BoundStatement boundStatement = new BoundStatement(ps);
         boundStatement.setFetchSize(1000);
 
-        rs = session.execute(boundStatement.bind(java.util.UUID.fromString(DeviceName), InsertionTime));
+        rs = session.execute(boundStatement.bind(DeviceName, InsertionTime));
         if (rs.isExhausted()) {
             System.out.println("No Devices");
             return null;
@@ -204,7 +204,7 @@ public class DeviceModel {
             dd = new D3Store();
             //dd.setReadingType(SensorReadingType);
             for (Row row : rs) {
-                dd.setName(row.getUUID("name"));
+                dd.setName(row.getString("name"));
                 dd.setMeta(row.getMap("metadata", String.class, String.class));
                 //LocalDate cdate=row.getDate("insertion_time");
                 Date cdate=row.getTimestamp("insertion_time");
@@ -227,7 +227,7 @@ public class DeviceModel {
         BoundStatement boundStatement = new BoundStatement(ps);
         boundStatement.setFetchSize(1000);
 
-        rs = session.execute(boundStatement.bind(java.util.UUID.fromString(DeviceName), StartDate, EndDate));
+        rs = session.execute(boundStatement.bind(DeviceName, StartDate, EndDate));
         if (rs.isExhausted()) {
             System.out.println("No Devices");
             return null;
@@ -237,7 +237,7 @@ public class DeviceModel {
             rs.getAvailableWithoutFetching();
             //dd.setReadingType(SensorReadingType);
             for (Row row : rs) {
-                dd.setName(row.getUUID("name"));
+                dd.setName(row.getString("name"));
                 dd.setMeta(row.getMap("metadata", String.class, String.class));
                 //http://www.datastax.com/documentation/developer/java-driver/2.1/java-driver/reference/udtApi.html
                 dd.setSensors(row.getMap("reading", String.class, UDTValue.class)); //Name of sensor and reading

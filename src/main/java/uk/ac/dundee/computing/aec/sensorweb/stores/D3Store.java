@@ -14,7 +14,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 /**
  *
@@ -22,7 +21,7 @@ import java.util.UUID;
  */
 public class D3Store {
 
-    private UUID DeviceName = null;
+    private String DeviceName = null;
     private Map<String, String> meta = null;
     private List<Date> dates = null;
     Map<String, UDTValue> sensorMap = null;
@@ -77,11 +76,11 @@ public class D3Store {
         return Error;
     }
 
-    public void setName(UUID Name) {
+    public void setName(String Name) {
         DeviceName = Name;
     }
 
-    public UUID getName() {
+    public String getName() {
         return DeviceName;
     }
 
