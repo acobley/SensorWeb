@@ -24,8 +24,8 @@
 <body>
     <header>
         <h1><a href="/SensorWeb/Devices" onmouseover="OnHeadingIn(this)">Sensors</a></h1>
-        <h2>V1.0</h2>
-        <h3>Range Slice with graphs and axis </h3>
+        <h2>FlowerPower Sensors</h2>
+        
     </header>
     <nav>
         <%
@@ -75,10 +75,19 @@
             if (Device != null) {
         %>
         <h2>Device <a href="/SensorWeb/Device/<%=Device.getName()%>"   ><%=Device.getName()%></a></h2>
+        <%                    
+        Map<String, String> meta = Device.getMeta();
+                    if (meta != null) {
+                        for (Map.Entry<String, String> entry : meta.entrySet()) {
+                %><%=entry.getKey()%>, <%=entry.getValue()%><br><%
+                        }
+                    }
+%>
         <div id="Graphs">
         </div>
         <% } %>
-        <div id="SensorDates">    
+        <div id="SensorDates">  
+            
             <%
                 java.util.LinkedList<DeviceStore> Devices = (java.util.LinkedList<DeviceStore>) request.getAttribute("Devices");
 

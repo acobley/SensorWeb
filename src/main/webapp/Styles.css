@@ -17,7 +17,7 @@ nav {
 
 svg{
     text-align: left;
-    border: 1px;
+    border: 3px;
     border-color:aliceblue;
     border-style:solid;
     float: left;
@@ -41,11 +41,20 @@ svg{
     float: right;
 }
 
-.axis path,
-.axis line{
+.xaxis path,
+.xaxis line{
     fill:none;
-    stroke:black;
     shape-rendering:crispEdges;
+    stroke-width: 1.5px;
+    stroke: #000;
+}
+
+.yaxis path,
+.yaxis line{
+    fill:none;
+    shape-rendering:crispEdges;
+    stroke-width: 1.5px;
+    stroke: #000;
 }
 
 .axis text{

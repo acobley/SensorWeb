@@ -35,8 +35,9 @@ function drawGraph(Data, Title) {
             .range([padding, Width - (2 * padding)]);
     var circles = svg.selectAll("circle").data(Data).enter()
             .append("circle");
-    var xAxis = d3.svg.axis().orient("bottom").scale(xscale);
+    var xAxis = d3.svg.axis().orient("bottom").scale(xscale).ticks(5);
     var yAxis = d3.svg.axis().orient("left").scale(yscale).ticks(5);
+
     circles.attr("cx", function (d, i) {
         return xscale(new Date(d.date));
     }).attr("cy", function (d, i) {
@@ -45,13 +46,23 @@ function drawGraph(Data, Title) {
     }).attr("r", function (d, i) {
         return 1;
     });
-    svg.append("g").attr("class", "axis")
-            .attr("transform", "translate(0," + (Height- padding) + ")")
+    svg.append("g").attr("class", "xaxis")
+            .attr("transform", "translate(0," + (Height - padding) + ")")
+            .style("font-size", "10px")
+.style("fill", "cornflowerblue")
             .call(xAxis);
 
-    svg.append("g").attr("class", "axis")
+    svg.append("g").attr("class", "yaxis")
             .attr("transform", "translate(" + padding + ",0)")
+            .style("font-size", "10px")
+            .style("fill", "cornflowerblue")
+
             .call(yAxis);
+    svg.selectAll(".xaxis text")  // select all the text elements for the xaxis
+
+            .attr("transform", function (d) {
+                return "translate(" + this.getBBox().height * -2 + "," + this.getBBox().height + ")rotate(-45)";
+            });
 
     svg.append("text")
             .attr("x", (Width / 2))
@@ -60,14 +71,13 @@ function drawGraph(Data, Title) {
             .style("font-size", "16px")
             .style("text-decoration", "underline")
             .text(Title);
-    svg.selectAll(".xaxis text")  // select all the text elements for the xaxis
-            .attr("transform", function (d) {
-                return "translate(" + this.getBBox().height * -2 + "," + this.getBBox().height + ")rotate(-45)";
-            });
+
+
+
 }
 
 function getGraphsData() {
-    var Route=null;
+    var Route = null;
     if (command === "Device") {
         path = path.replace("Device", "Days");
         Route = path + "/30/JSON/D3";
