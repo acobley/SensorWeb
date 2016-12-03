@@ -42,6 +42,11 @@
             if (PATH != null) {%>
 
         <a href="<%=PATH%>/JSON">Get json for this page</a>
+        <p id="days30">Draw 30 Days Graph</p>
+        <p id="days14">Draw 14 Days Graph</p>
+        <p id="days7">Draw 7 Days Graph</p>
+        <p id="days3">Draw 3 Days Graph</p>
+        <p id="days1">Draw 1 Day Graph</p>
         <script>
             $(function () {
                 setPath("<%=ServerPath%><%=PATH%>");

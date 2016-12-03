@@ -4,6 +4,7 @@
  * and open the template in the editor.
  */
 
+var svg;
 
 function drawGraph(Data, Title) {
     Width = 500;
@@ -49,7 +50,7 @@ function drawGraph(Data, Title) {
     svg.append("g").attr("class", "xaxis")
             .attr("transform", "translate(0," + (Height - padding) + ")")
             .style("font-size", "10px")
-.style("fill", "cornflowerblue")
+            .style("fill", "cornflowerblue")
             .call(xAxis);
 
     svg.append("g").attr("class", "yaxis")
@@ -77,6 +78,9 @@ function drawGraph(Data, Title) {
 }
 
 function getGraphsData() {
+
+
+
     var Route = null;
     if (command === "Device") {
         path = path.replace("Device", "Days");
@@ -94,7 +98,7 @@ function getGraphsData() {
 
             for (var i in readings) {
                 var reading = readings[i];
-                drawGraph(reading, i);
+                drawGraph(reading, i+" (30 Days)");
                 //console.log(i);
             }
 
@@ -103,5 +107,52 @@ function getGraphsData() {
 
 }
 
+function getGraphsPeriodData(Period) {
+    if (typeof Period == 'undefined'){
+        return;
+    }
+    svg.selectAll("*").remove();
+    var Route = null;
+    if (command === "Device") {
+        path = path.replace("Device", "Days");
+        Route = path + "/" + Period + "/JSON/D3";
+    } else {
+        Route = path + "/1/JSON/D3";
+    }
+    d3.json(Route, function (error, data) {
+        if (error) {
+            console.log(error);
+        } else {
+            var readings = data["D3Readings"];
 
-window.onload = getGraphsData;
+
+
+            for (var i in readings) {
+                var reading = readings[i];
+                drawGraph(reading, i+" "+Period+" Days");
+                //console.log(i);
+            }
+
+        }
+    });
+
+}
+
+window.onload = function () {
+    d3.select("#days30").on('click', function () {
+        getGraphsPeriodData(30);
+    });
+        d3.select("#days14").on('click', function () {
+        getGraphsPeriodData(14);
+    });
+    d3.select("#days7").on('click', function () {
+        getGraphsPeriodData(7);
+    });
+    d3.select("#days3").on('click', function () {
+        getGraphsPeriodData(3);
+    });
+    d3.select("#days1").on('click', function () {
+        getGraphsPeriodData(1);
+    });
+    getGraphsData();
+}
