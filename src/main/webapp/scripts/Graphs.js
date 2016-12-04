@@ -47,6 +47,10 @@ function drawGraph(Data, Title) {
     }).attr("r", function (d, i) {
         return 1;
     });
+    
+    circles
+   .append("svg:title")
+   .text(function(d) { return d.value; });
     svg.append("g").attr("class", "xaxis")
             .attr("transform", "translate(0," + (Height - padding) + ")")
             .style("font-size", "10px")
@@ -111,7 +115,7 @@ function getGraphsPeriodData(Period) {
     if (typeof Period == 'undefined'){
         return;
     }
-    svg.selectAll("*").remove();
+
     var Route = null;
     if (command === "Device") {
         path = path.replace("Device", "Days");
