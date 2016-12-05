@@ -5,14 +5,26 @@
  */
 
 var svg;
+var axScale = [];
+var ayScale = [];
 
-function drawGraph(Data, Title) {
+function drawGraph(Data, Title, ID,Colour) {
     Width = 500;
     Height = 200;
     var padding = 50;
 
     var Datalength = Data.length;
-    svg = d3.select("#Graphs").append("svg").attr("width", Width).attr("height", Height);
+    var first = false;
+    svg = d3.select("#" + ID);
+    if (svg.empty()) {
+        svg[ID] = d3.select("#Graphs").append("svg").attr("id", ID).attr("width", Width).attr("height", Height);
+        svg = svg[ID];
+        first = true;
+
+    } else {
+        xscale = axScale[ID];
+        yscale = ayScale[ID];
+    }
 
     var ymin = d3.min(Data, function (d) {
         return parseFloat(d.value, 10);
@@ -28,29 +40,44 @@ function drawGraph(Data, Title) {
         return new Date(d.date);
     });
 
-    var yscale = d3.scale.linear()
-            .domain([ymin - 1, ymax])
-            .range([Height - padding, padding]);
-    var xscale = d3.time.scale()
-            .domain([mindate, maxdate])
-            .range([padding, Width - (2 * padding)]);
+
+    if (first == true) {
+        yscale = d3.scale.linear()
+                .domain([ymin - 1, ymax])
+                .range([Height - padding, padding]);
+        xscale = d3.time.scale()
+                .domain([mindate, maxdate])
+                .range([padding, Width - (2 * padding)]);
+        axScale[ID] = xscale;
+        ayScale[ID] = yscale
+    }
     var circles = svg.selectAll("circle").data(Data).enter()
             .append("circle");
     var xAxis = d3.svg.axis().orient("bottom").scale(xscale).ticks(5);
     var yAxis = d3.svg.axis().orient("left").scale(yscale).ticks(5);
 
-    circles.attr("cx", function (d, i) {
-        return xscale(new Date(d.date));
-    }).attr("cy", function (d, i) {
-        cy = parseFloat(d.value, 10);
-        return yscale(cy);
-    }).attr("r", function (d, i) {
-        return 1;
-    });
-    
+    var lineFunction = d3.svg.line()
+            .x(function (d) {
+                return xscale(new Date(d.date))
+            })
+            .y(function (d) {
+                cy = parseFloat(d.value, 10);
+                return yscale(cy);
+            })
+            .interpolate("monotone");
+
+    var lineGraph = svg.append("path")
+            .attr("d", lineFunction(Data))
+            .attr("stroke", Colour)
+            .attr("stroke-width", 1)
+            .attr("fill", "none");
+
+
     circles
-   .append("svg:title")
-   .text(function(d) { return d.value; });
+            .append("svg:title")
+            .text(function (d) {
+                return d.value;
+            });
     svg.append("g").attr("class", "xaxis")
             .attr("transform", "translate(0," + (Height - padding) + ")")
             .style("font-size", "10px")
@@ -81,10 +108,13 @@ function drawGraph(Data, Title) {
 
 }
 
+function sortByDateAscending(a, b) {
+    // Dates will be cast to numbers automagically:
+    var diff = new Date(a.date) - new Date(b.date);
+    return diff;
+}
+
 function getGraphsData() {
-
-
-
     var Route = null;
     if (command === "Device") {
         path = path.replace("Device", "Days");
@@ -97,12 +127,10 @@ function getGraphsData() {
             console.log(error);
         } else {
             var readings = data["D3Readings"];
-
-
-
             for (var i in readings) {
                 var reading = readings[i];
-                drawGraph(reading, i+" (30 Days)");
+                reading = reading.sort(sortByDateAscending);
+                drawGraph(reading, i + " (30 Days)", i,"cornflowerblue");
                 //console.log(i);
             }
 
@@ -112,7 +140,7 @@ function getGraphsData() {
 }
 
 function getGraphsPeriodData(Period) {
-    if (typeof Period == 'undefined'){
+    if (typeof Period == 'undefined') {
         return;
     }
 
@@ -128,15 +156,12 @@ function getGraphsPeriodData(Period) {
             console.log(error);
         } else {
             var readings = data["D3Readings"];
-
-
-
             for (var i in readings) {
                 var reading = readings[i];
-                drawGraph(reading, i+" "+Period+" Days");
+                reading = reading.sort(sortByDateAscending);
+                drawGraph(reading, i + " " + Period + " Days", i);
                 //console.log(i);
             }
-
         }
     });
 
@@ -146,7 +171,7 @@ window.onload = function () {
     d3.select("#days30").on('click', function () {
         getGraphsPeriodData(30);
     });
-        d3.select("#days14").on('click', function () {
+    d3.select("#days14").on('click', function () {
         getGraphsPeriodData(14);
     });
     d3.select("#days7").on('click', function () {
@@ -159,4 +184,27 @@ window.onload = function () {
         getGraphsPeriodData(1);
     });
     getGraphsData();
+}
+
+function getDeviceGraphsData(Device,Colour) {
+    var Route = null;
+
+    path = path.replace("Devices", "Days");
+    Route = path + "/" + Device + "/30/JSON/D3";
+
+    d3.json(Route, function (error, data) {
+        if (error) {
+            console.log(error);
+        } else {
+            var readings = data["D3Readings"];
+            for (var i in readings) {
+                var reading = readings[i];
+                reading = reading.sort(sortByDateAscending);
+                drawGraph(reading, i + " (30 Days)", i,Colour);
+                //console.log(i);
+            }
+
+        }
+    });
+
 }

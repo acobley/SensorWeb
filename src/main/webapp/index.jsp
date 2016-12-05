@@ -29,6 +29,140 @@
     </header>
     <nav>
         <%
+            String Colours[]={
+
+"blue"
+,"blueviolet"
+
+,"burlywood"
+,"cadetblue"
+,"chartreuse"
+,"chocolate"
+,"coral"
+,"cornflowerblue"
+,"cornsilk"
+,"crimson"
+,"cyan"
+,"darkblue"
+,"darkcyan"
+,"darkgoldenrod"
+,"darkgray"
+,"darkgreen"
+,"darkkhaki"
+,"darkmagenta"
+,"darkolivegreen"
+,"darkorange"
+,"darkorchid"
+,"darkred"
+,"darksalmon"
+,"darkseagreen"
+,"darkslateblue"
+,"darkslategray"
+,"darkturquoise"
+,"darkviolet"
+,"deeppink"
+,"deepskyblue"
+,"dimgray"
+,"dodgerblue"
+,"firebrick"
+,"floralwhite"
+,"forestgreen"
+,"fuchsia"
+,"gainsboro"
+,"ghostwhite"
+,"gold"
+,"goldenrod"
+,"gray"
+,"green"
+,"greenyellow"
+,"honeydew"
+,"hotpink"
+,"indianred"
+,"indigo"
+,"ivory"
+,"khaki"
+,"lavender"
+,"lavenderblush" 
+,"lawngreen"
+,"lemonchiffon"
+,"lightblue"
+,"lightcoral"
+,"lightcyan"
+,"lightgoldenrodyellow"
+,"lightgreen" 
+,"lightgrey" 
+,"lightpink" 
+,"lightsalmon" 
+,"lightseagreen" 
+,"lightskyblue" 
+,"lightslategray" 
+,"lightsteelblue" 
+,"lightyellow" 
+,"lime" 
+,"limegreen" 
+,"linen" 
+,"magenta" 
+,"maroon" 
+,"mediumaquamarine" 
+,"mediumblue" 
+,"mediumorchid" 
+,"mediumpurple" 
+,"mediumseagreen" 
+,"mediumslateblue" 
+,"mediumspringgreen" 
+,"mediumturquoise" 
+,"mediumvioletred" 
+,"midnightblue" 
+,"mintcream" 
+,"mistyrose" 
+,"moccasin" 
+,"navajowhite" 
+,"navy" 
+,"oldlace" 
+,"olive"
+,"olivedrab"
+,"orange"
+,"orangered"
+,"orchid"
+,"palegoldenrod"
+,"palegreen"
+,"paleturquoise"
+,"palevioletred"
+,"papayawhip"
+,"peachpuff"
+,"peru"
+,"pink"
+,"plum"
+,"powderblue"
+,"purple"
+,"red"
+,"rosybrown"
+,"royalblue"
+,"saddlebrown"
+,"salmon"
+,"sandybrown"
+,"seagreen"
+,"seashell"
+,"sienna"
+,"silver"
+,"skyblue"
+,"slateblue"
+,"slategray"
+,"snow"
+,"springgreen"
+,"steelblue"
+,"tan"
+,"teal"
+,"thistle"
+,"tomato"
+,"turquoise"
+,"violet"
+,"wheat"
+,"white"
+,"whitesmoke"
+,"yellow"
+,"yellowgreen"
+};
             String PATH = null;
             String args[] = null;
             String ServerPath = new URL(request.getScheme(),
@@ -41,12 +175,12 @@
             }
             if (PATH != null) {%>
 
-        <a href="<%=PATH%>/JSON">Get json for this page</a>
-        <p id="days30">Draw 30 Days Graph</p>
-        <p id="days14">Draw 14 Days Graph</p>
-        <p id="days7">Draw 7 Days Graph</p>
-        <p id="days3">Draw 3 Days Graph</p>
-        <p id="days1">Draw 1 Day Graph</p>
+            <a href="<%=PATH%>/JSON">Get json for this page</a><br>
+            <button id="days30" >Draw 30 Days Graph</button><br>
+        <button id="days14">Draw 14 Days Graph</button><br>
+        <button id="days7">Draw 7 Days Graph</button><br>
+        <button id="days3">Draw 3 Days Graph</button><br>
+        <button id="days1">Draw 1 Day Graph</button><br>
         <script>
             $(function () {
                 setPath("<%=ServerPath%><%=PATH%>");
@@ -88,8 +222,7 @@
                         }
                     }
 %>
-        <div id="Graphs">
-        </div>
+
         <% } %>
         <div id="SensorDates">  
             
@@ -103,15 +236,18 @@
             } else {
                 Iterator<DeviceStore> iterator;
                 iterator = Devices.iterator();
+int Colour=0;
                 while (iterator.hasNext()) {
                     DeviceStore p = (DeviceStore) iterator.next();
 
             %>
-            <a href="/SensorWeb/Device/<%=p.getName()%>" onmouseover="OnMouseIn(this)" onmouseout="OnMouseOut(this)"><%=p.getName()%></a><br/><%
-
+            <button id="Device" onclick="getDeviceGraphsData('<%=p.getName()%>','<%=Colours[Colour]%>')">Draw</button><a href="/SensorWeb/Device/<%=p.getName()%>" onmouseover="OnMouseIn(this)" onmouseout="OnMouseOut(this)"><%=p.getName()%></a><br/><%
+                       Colour++;
                     }
                 }
             %>
+                    <div id="Graphs">
+        </div>
         </div>
     </article>
 </body>
