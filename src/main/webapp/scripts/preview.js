@@ -44,15 +44,28 @@ function OnMouseIn(elem) {
         for (i in meta) {
 
             k = meta[i];
-            $("#preview").append(i + " : " + k + "<br>");
+            
+            if (i=='latitude')
+                p1=k;
+             if (i=='longitude')
+                p2=k;
+            if (i=='Is_indoor'){
+                if (k=="false")
+                    k="No";
+                else
+                    k="Yes"
+            }
+            if (i=='Avatar'){
+                k = k.replace(/\/\s*$/, "");
+                $("#preview").append("<img src="+k+" width='200'><br>")
+            }else{
+                $("#preview").append(i + " : " + k + "<br>");
+            }
 
         }
-         $("#preview").append("<h3>Available Dates</h3>");
-        var dates=data["Dates"];
-        for (i in dates){
-            k=dates[i];
-            $("#preview").append( k + "<br>");
-        }
+        initializeMap();
+        drawmap(p1,p2);
+        
         
         var sensors=data["SensorList"];
         if (sensors!=null){

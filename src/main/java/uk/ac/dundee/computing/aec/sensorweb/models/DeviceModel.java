@@ -68,7 +68,7 @@ public class DeviceModel {
 
     public DeviceStore getDevice(String DeviceName) {
         DeviceStore dd = null;
-        String DeviceQuery = "select * from sensorsync.sensors where name=? order by insertion_time desc ";
+        String DeviceQuery = "select * from sensorsync.sensors where name=? order by insertion_time asc ";
         PreparedStatement ps = session.prepare(DeviceQuery);
         ResultSet rs = null;
         BoundStatement boundStatement = new BoundStatement(ps);

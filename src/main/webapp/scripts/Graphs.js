@@ -8,7 +8,7 @@ var svg;
 var axScale = [];
 var ayScale = [];
 
-function drawGraph(Data, Title, ID,Colour) {
+function drawGraph(Data, Title, ID,Colour,ReCalcXScale) {
     Width = 500;
     Height = 200;
     var padding = 50;
@@ -40,10 +40,15 @@ function drawGraph(Data, Title, ID,Colour) {
         return new Date(d.date);
     });
 
-
+    if (ReCalcXScale==true){
+        xscale = d3.time.scale()
+                .domain([mindate, maxdate])
+                .range([padding, Width - (2 * padding)]);
+        axScale[ID] = xscale;
+    }
     if (first == true) {
         yscale = d3.scale.linear()
-                .domain([ymin - 1, ymax])
+                .domain([ymin - 1, ymax+ymax/10])
                 .range([Height - padding, padding]);
         xscale = d3.time.scale()
                 .domain([mindate, maxdate])
@@ -157,9 +162,14 @@ function getGraphsPeriodData(Period) {
         } else {
             var readings = data["D3Readings"];
             for (var i in readings) {
+                 svg = d3.select("#" + i);
+                 
+                if (!svg.empty()) {
+                    svg.selectAll("*").remove();
+                }
                 var reading = readings[i];
                 reading = reading.sort(sortByDateAscending);
-                drawGraph(reading, i + " " + Period + " Days", i);
+                drawGraph(reading, i + " " + Period + " Days", i,"cornflowerblue",true);
                 //console.log(i);
             }
         }
@@ -168,6 +178,7 @@ function getGraphsPeriodData(Period) {
 }
 
 window.onload = function () {
+    
     d3.select("#days30").on('click', function () {
         getGraphsPeriodData(30);
     });
