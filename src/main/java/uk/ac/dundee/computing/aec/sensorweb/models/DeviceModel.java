@@ -5,23 +5,27 @@
  */
 package uk.ac.dundee.computing.aec.sensorweb.models;
 
-import com.datastax.driver.core.BoundStatement;
-import com.datastax.driver.core.Cluster;
-import static com.datastax.driver.core.DataType.timestamp;
-import com.datastax.driver.core.LocalDate;
-import com.datastax.driver.core.PreparedStatement;
-import com.datastax.driver.core.ResultSet;
-import com.datastax.driver.core.Row;
-import com.datastax.driver.core.Session;
-import static com.datastax.driver.core.TypeCodec.timestamp;
-import com.datastax.driver.core.UDTValue;
-import com.datastax.driver.core.UserType;
+import com.datastax.oss.driver.api.core.CqlSession;
+import com.datastax.oss.driver.api.core.cql.BoundStatement;
+import com.datastax.oss.driver.api.core.cql.PreparedStatement;
+import com.datastax.oss.driver.api.core.cql.SimpleStatement;
+import com.datastax.oss.driver.api.core.cql.Statement;
+import com.datastax.oss.driver.api.core.cql.ResultSet;
+import com.datastax.oss.driver.api.core.cql.Row;
+import com.datastax.oss.driver.api.core.data.UdtValue;
+import com.datastax.oss.driver.api.core.type.UserDefinedType;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.time.LocalTime;
+import java.time.LocalDate;
+import java.time.Instant;
+import java.time.ZoneId;
+
 import uk.ac.dundee.computing.aec.sensorweb.lib.Convertors;
 import uk.ac.dundee.computing.aec.sensorweb.stores.D3Store;
 import uk.ac.dundee.computing.aec.sensorweb.stores.DeviceStore;
@@ -32,15 +36,15 @@ import uk.ac.dundee.computing.aec.sensorweb.stores.DeviceStore;
  */
 public class DeviceModel {
 
-    Cluster cluster = null;
-    Session session = null;
-    UserType SensorReadingType = null;
+    
+    CqlSession session = null;
+    UserDefinedType SensorReadingType = null;
 
     public void Device() {
-        SensorReadingType = cluster.getMetadata().getKeyspace("sensorsync").getUserType("SensorReading");
-    }
+        SensorReadingType = session.getMetadata().getKeyspace("sensorsync").flatMap(sensorsync -> sensorsync.getUserDefinedType("SensorReading")).orElseThrow(() -> new IllegalArgumentException("Missing UDT definition"));;
+     }
 
-    public void setSession(Session session) {
+    public void setSession(CqlSession session) {
 
         this.session = session;
     }
@@ -48,11 +52,20 @@ public class DeviceModel {
     public List<DeviceStore> getDevices() {
         List<DeviceStore> devices = new LinkedList<DeviceStore>();
         String DeviceQuery = "select distinct name from sensorsync.sensors";
-        PreparedStatement ps = session.prepare(DeviceQuery);
+        
+        
+        SimpleStatement statement =
+                   SimpleStatement.newInstance(DeviceQuery);
+        System.out.println(statement.getQuery());
+        
         ResultSet rs = null;
-        BoundStatement boundStatement = new BoundStatement(ps);
-        rs = session.execute(boundStatement.bind());
-        if (rs.isExhausted()) {
+        
+        try {
+        rs = session.execute(statement);
+        }catch(Exception et){
+            System.out.println("can't execute statement select distinct name from sensorsync.sensors"+et);
+        }
+        if (rs.getAvailableWithoutFetching()==0) {
             System.out.println("No Devices");
             return null;
         } else {
@@ -71,9 +84,9 @@ public class DeviceModel {
         String DeviceQuery = "select * from sensorsync.sensors where name=? order by insertion_time asc ";
         PreparedStatement ps = session.prepare(DeviceQuery);
         ResultSet rs = null;
-        BoundStatement boundStatement = new BoundStatement(ps);
-        rs = session.execute(boundStatement.bind(DeviceName));
-        if (rs.isExhausted()) {
+       BoundStatement bound = ps.bind(DeviceName);
+        rs = session.execute(bound);
+        if (rs.getAvailableWithoutFetching()==0) {
             System.out.println("No Devices");
             return null;
         } else {
@@ -82,9 +95,13 @@ public class DeviceModel {
                 dd.setName(row.getString("name"));
                 dd.setMeta(row.getMap("metadata", String.class, String.class));
                 //LocalDate cdate=row.getDate("insertion_time");
-                Date cdate=row.getTimestamp("insertion_time");
+
+                 //LocalDate ldate=row.getLocalDate("insertion_time");
+                 Instant i=row.getInstant("insertion_time");
+                 LocalDate ldate=i.atZone(ZoneId.systemDefault()).toLocalDate();
+                 //LocalDate ldate= LocalDate.from( row.getInstant("insertion_time"));
                 //dd.addDate(new Date(cdate.getMillisSinceEpoch()));
-                dd.addDate(cdate);
+                dd.addDate(ldate);
             }
         }
         return dd;
@@ -95,11 +112,10 @@ public class DeviceModel {
         String DeviceQuery = "select * from sensorsync.sensors where name=? and insertion_time=?";
         PreparedStatement ps = session.prepare(DeviceQuery);
         ResultSet rs = null;
-        BoundStatement boundStatement = new BoundStatement(ps);
-
         Date dt = Convertors.StringToDate(InsertionTime);
-        rs = session.execute(boundStatement.bind(DeviceName, dt));
-        if (rs.isExhausted()) {
+        BoundStatement bound = ps.bind(DeviceName, dt);
+        rs = session.execute(bound);
+        if (rs.isFullyFetched()) {
             System.out.println("No Devices");
             return null;
         } else {
@@ -110,27 +126,29 @@ public class DeviceModel {
                 dd.setName(row.getString("name"));
                 dd.setMeta(row.getMap("metadata", String.class, String.class));
                 //LocalDate cdate=row.getDate("insertion_time");
-                Date cdate=row.getTimestamp("insertion_time");
+                LocalDate ldate=row.getLocalDate("insertion_time");
                 //dd.addDate(new Date(cdate.getMillisSinceEpoch()));
-                dd.addDate(cdate);
+                dd.addDate(ldate);
                 //http://www.datastax.com/documentation/developer/java-driver/2.1/java-driver/reference/udtApi.html
-                dd.setSensors(row.getMap("reading", String.class, UDTValue.class));
+                dd.setSensors(row.getMap("reading", String.class, UdtValue.class));
             }
         }
         return dd;
     }
 
     //get readings for a date > than Insertion Time
-    public DeviceStore getDeviceRange(String DeviceName, Date InsertionTime) {
+    public DeviceStore getDeviceRange(String DeviceName, LocalDate InsertionTime) {
         DeviceStore dd = null;
         String DeviceQuery = "select * from sensorsync.sensors where name=? and insertion_time>=? order by insertion_time desc";
         PreparedStatement ps = session.prepare(DeviceQuery);
         ResultSet rs = null;
-        BoundStatement boundStatement = new BoundStatement(ps);
-        boundStatement.setFetchSize(1000);
+         BoundStatement bound = ps.bind(java.util.UUID.fromString(DeviceName), Convertors.LocalDateToInstant(InsertionTime));
+         //bound.setFetchSize(1000);
+         
+        rs = session.execute(bound);
+        
 
-        rs = session.execute(boundStatement.bind(java.util.UUID.fromString(DeviceName), InsertionTime));
-        if (rs.isExhausted()) {
+        if (rs.isFullyFetched()) {
             System.out.println("No Devices");
             return null;
         } else {
@@ -141,29 +159,32 @@ public class DeviceModel {
                 dd.setName(row.getString("name"));
                 dd.setMeta(row.getMap("metadata", String.class, String.class));
                  //LocalDate cdate=row.getDate("insertion_time");
-                Date cdate=row.getTimestamp("insertion_time");
-                dd.addDate(cdate);
+                 Instant i=row.getInstant("insertion_time");
+                 LocalDate ldate=i.atZone(ZoneId.systemDefault()).toLocalDate();
+                //LocalDate ldate=row.getLocalDate("insertion_time");
+                dd.addDate(ldate);
                 //dd.addDate(new Date(cdate.getMillisSinceEpoch()));
                 //dd.addDate(cdate);
                 //http://www.datastax.com/documentation/developer/java-driver/2.1/java-driver/reference/udtApi.html
-                dd.setSensors(row.getMap("reading", String.class, UDTValue.class));
-                dd.addReading(cdate, row.getMap("reading", String.class, UDTValue.class));
+                dd.setSensors(row.getMap("reading", String.class, UdtValue.class));
+                dd.addReading(ldate, row.getMap("reading", String.class, UdtValue.class));
 
             }
         }
         return dd;
     }
 
-    public DeviceStore getDeviceRange(String DeviceName, Date StartDate, Date EndDate) {
+    public DeviceStore getDeviceRange(String DeviceName, LocalDate StartDate, LocalDate EndDate) {
         DeviceStore dd = null;
         String DeviceQuery = "select * from sensorsync.sensors where name=? and insertion_time>? and insertion_time<? order by insertion_time desc";
         PreparedStatement ps = session.prepare(DeviceQuery);
         ResultSet rs = null;
-        BoundStatement boundStatement = new BoundStatement(ps);
-        boundStatement.setFetchSize(1000);
-
-        rs = session.execute(boundStatement.bind(DeviceName, StartDate, EndDate));
-        if (rs.isExhausted()) {
+        
+        //boundStatement.setFetchSize(1000);
+       BoundStatement bound = ps.bind(DeviceName, Convertors.LocalDateToInstant(StartDate), Convertors.LocalDateToInstant(EndDate));
+        rs = session.execute(bound);
+ 
+        if (rs.isFullyFetched()) {
             System.out.println("No Devices");
             return null;
         } else {
@@ -175,28 +196,30 @@ public class DeviceModel {
                 dd.setName(row.getString("name"));
                 dd.setMeta(row.getMap("metadata", String.class, String.class));
                 //LocalDate cdate=row.getDate("insertion_time");
-                Date cdate=row.getTimestamp("insertion_time");
+                Instant i=row.getInstant("insertion_time");
+                 LocalDate ldate=i.atZone(ZoneId.systemDefault()).toLocalDate();
+                //LocalDate ldate=row.getLocalDate("insertion_time");
                 //dd.addDate(new Date(cdate.getMillisSinceEpoch()));
-                dd.addDate(cdate);
+                dd.addDate(ldate);
                 //http://www.datastax.com/documentation/developer/java-driver/2.1/java-driver/reference/udtApi.html
-                dd.setSensors(row.getMap("reading", String.class, UDTValue.class)); //Name of sensor and reading
-                dd.addReading(cdate, row.getMap("reading", String.class, UDTValue.class));
+                dd.setSensors(row.getMap("reading", String.class, UdtValue.class)); //Name of sensor and reading
+                dd.addReading(ldate, row.getMap("reading", String.class, UdtValue.class));
             }
         }
         return dd;
     }
 
     //get readings for a date > than Insertion Time
-    public D3Store getD3Range(String DeviceName, Date InsertionTime) {
+    public D3Store getD3Range(String DeviceName, LocalDate InsertionTime) {
         D3Store dd = null;
         String DeviceQuery = "select * from sensorsync.sensors where name=? and insertion_time>=? order by insertion_time desc";
         PreparedStatement ps = session.prepare(DeviceQuery);
         ResultSet rs = null;
-        BoundStatement boundStatement = new BoundStatement(ps);
-        boundStatement.setFetchSize(1000);
+          BoundStatement bound = ps.bind(DeviceName, Convertors.LocalDateToInstant(InsertionTime));
+        rs = session.execute(bound);
+ 
 
-        rs = session.execute(boundStatement.bind(DeviceName, InsertionTime));
-        if (rs.isExhausted()) {
+        if (rs.isFullyFetched()) {
             System.out.println("No Devices");
             return null;
         } else {
@@ -207,46 +230,50 @@ public class DeviceModel {
                 dd.setName(row.getString("name"));
                 dd.setMeta(row.getMap("metadata", String.class, String.class));
                 //LocalDate cdate=row.getDate("insertion_time");
-                Date cdate=row.getTimestamp("insertion_time");
+                
+                //LocalDate ldate=row.getLocalDate("insertion_time");
+                Instant i=row.getInstant("insertion_time");
+                 LocalDate ldate=i.atZone(ZoneId.systemDefault()).toLocalDate();
                 //dd.addDate(new Date(cdate.getMillisSinceEpoch()));
-                dd.addDate(cdate);
+                dd.addDate(ldate);
                 //http://www.datastax.com/documentation/developer/java-driver/2.1/java-driver/reference/udtApi.html
-                dd.setSensors(row.getMap("reading", String.class, UDTValue.class));
-                dd.addReading(cdate, row.getMap("reading", String.class, UDTValue.class));
+                dd.setSensors(row.getMap("reading", String.class, UdtValue.class));
+                dd.addReading(ldate, row.getMap("reading", String.class, UdtValue.class));
 
             }
         }
         return dd;
     }
 
-    public D3Store getD3Range(String DeviceName, Date StartDate, Date EndDate) {
+    public D3Store getD3Range(String DeviceName, LocalDate StartDate, LocalDate EndDate) {
         D3Store dd = null;
         String DeviceQuery = "select * from sensorsync.sensors where name=? and insertion_time>? and insertion_time<? order by insertion_time desc";
         PreparedStatement ps = session.prepare(DeviceQuery);
         ResultSet rs = null;
-        BoundStatement boundStatement = new BoundStatement(ps);
-        boundStatement.setFetchSize(1000);
-
-        rs = session.execute(boundStatement.bind(DeviceName, StartDate, EndDate));
-        if (rs.isExhausted()) {
+        BoundStatement bound = ps.bind(DeviceName, Convertors.LocalDateToInstant(StartDate), Convertors.LocalDateToInstant(EndDate));
+        System.out.println(bound.toString());
+        rs = session.execute(bound);
+        if (rs.getAvailableWithoutFetching()==0) {
             System.out.println("No Devices");
             return null;
         } else {
 
             dd = new D3Store();
-            rs.getAvailableWithoutFetching();
+           
             //dd.setReadingType(SensorReadingType);
             for (Row row : rs) {
                 dd.setName(row.getString("name"));
                 dd.setMeta(row.getMap("metadata", String.class, String.class));
                 //http://www.datastax.com/documentation/developer/java-driver/2.1/java-driver/reference/udtApi.html
-                dd.setSensors(row.getMap("reading", String.class, UDTValue.class)); //Name of sensor and reading
+                dd.setSensors(row.getMap("reading", String.class, UdtValue.class)); //Name of sensor and reading
                //LocalDate cdate=row.getDate("insertion_time");
-                Date cdate=row.getTimestamp("insertion_time");
+               Instant i=row.getInstant("insertion_time");
+                 LocalDate ldate=i.atZone(ZoneId.systemDefault()).toLocalDate();
+                //LocalDate ldate=row.getLocalDate("insertion_time");
                 //dd.addDate(new Date(cdate.getMillisSinceEpoch()));
-                dd.addDate(cdate);
+                dd.addDate(ldate);
           
-                dd.addReading(cdate, row.getMap("reading", String.class, UDTValue.class));
+                dd.addReading(ldate, row.getMap("reading", String.class, UdtValue.class));
             }
         }
         return dd;

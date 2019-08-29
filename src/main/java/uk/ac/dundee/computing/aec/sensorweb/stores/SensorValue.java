@@ -5,7 +5,7 @@
  */
 package uk.ac.dundee.computing.aec.sensorweb.stores;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 /**
  *
@@ -13,20 +13,20 @@ import java.util.Date;
  */
 public class SensorValue {
 
-    private Date dd;
+    private LocalDate dd;
     private String Value;
 
     public SensorValue() {
 
     }
 
-    public void create(Date dd, String Value) {
+    public void create(LocalDate dd, String Value) {
         this.dd = dd;
         this.Value = Value;
 
     }
 
-    public Date getDate() {
+    public LocalDate getDate() {
         return dd;
     }
 

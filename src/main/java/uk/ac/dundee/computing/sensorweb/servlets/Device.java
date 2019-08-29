@@ -5,12 +5,14 @@
  */
 package uk.ac.dundee.computing.sensorweb.servlets;
 
-import com.datastax.driver.core.Cluster;
-import com.datastax.driver.core.Session;
+import com.datastax.oss.driver.api.core.*;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.net.Socket;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Map;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -30,16 +32,17 @@ import uk.ac.dundee.computing.aec.sensorweb.stores.DeviceStore;
 @WebServlet(name = "Device", urlPatterns = {"/Device", "/Device/*"})
 public class Device extends HttpServlet {
 
-    private Cluster cluster = null;
-    private Session session = null;
-    private HashMap CommandsMap = new HashMap();
 
+    private CqlSession session = null;
+    private HashMap CommandsMap = new HashMap();
+    private HashMap putMap = new HashMap();
     public void init(ServletConfig config) throws ServletException {
        
-        cluster = CassandraHosts.getCluster();
-        session = cluster.newSession();
+        session = CassandraHosts.getCluster();
         CommandsMap.put("JSON", 1);
-        
+        putMap.put("Data",1);
+        putMap.put("json",2);
+        putMap.put("JSON",3);
     }
 
     /**
@@ -130,7 +133,62 @@ request.setAttribute("Path", request.getRequestURI());
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        System.out.println("Device doPost");
+        String Key = null;
+        String sJSON=null;
+        Map<String, String[]> map = request.getParameterMap();
+        for (Map.Entry<String, String[]> entry : map.entrySet()) {
+            System.out.println("Key = " + entry.getKey()
+                    + ", Value = " + entry.getValue());
+            Key = entry.getKey();
+            byte[] data = Key.getBytes("ASCII");
+            sJSON = new String(data);
+            System.out.println(sJSON);
+            String value[]=entry.getValue();
+            if (putMap.containsKey(Key)) {
+                Integer i=(Integer) putMap.get(Key);
+                switch(i){
+                    case 1 : sJSON=value[0];  //text
+                             break;
+                    case 2 : data = value[0].getBytes("ASCII");
+                             sJSON=new String(data);
+                             
+                             break;
+                    case 3 :data = value[0].getBytes("ASCII");
+                             //sJSON=new String(data);
+                             sJSON=value[0];
+                             sJSON=sJSON.replace("\r", "");
+                             sJSON=sJSON.replace("\n", "");
+                             break;
+                    default:
+                             break;
+        } }
+            
+            
+            
+            Socket sc = null;
+            boolean sent = false;
+            String ip = "172.17.0.4";
+            //String ip = "127.0.0.1";  //Change for deployment
+            while (sent == false) {
+                try {
+                    sc = new Socket(ip, 19877);
+                    //sc = new Socket(ip, 80);
+                    OutputStream os = sc.getOutputStream();
+                    PrintWriter out = new PrintWriter(os);
+                    out.print(sJSON);
+                    out.print("\r\n");
+                    out.close();
+                    sc.close();
+                    sent = true;
+                    
+                } catch (Exception et) {
+                    System.out.println("No Host " + " : " + ip);
+                    
+                }
+            }
+ 
+        }
     }
 
     /**

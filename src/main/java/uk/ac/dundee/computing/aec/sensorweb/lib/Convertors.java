@@ -7,8 +7,11 @@ import javax.servlet.http.HttpServletRequest;
 import com.eaio.uuid.UUID;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.Calendar;
 import java.util.Date;
+import java.time.LocalDate;
+import java.time.ZoneId;
 
 public final class Convertors {
 
@@ -185,7 +188,29 @@ public final class Convertors {
         Date dt = cl.getTime();
         return (dt);
     }
-
+    
+    public static LocalDate StringToLocalDate(String dd) throws ParseException {
+        Calendar cl = Calendar.getInstance();
+        SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM d HH:mm:ss zzz yyyy");
+        try {
+            cl.setTime(sdf.parse(dd));
+        } catch (ParseException et) {
+            System.out.println("Can't convert date" + et);
+            throw et;
+        }
+        Date dt = cl.getTime();
+        LocalDate date =DateToLocalDate(dt);
+         return (date);
+    }
+    public static  Instant LocalDateToInstant(LocalDate dt){
+        Instant i= dt.atStartOfDay(ZoneId.systemDefault()).toInstant();
+        return i;
+    }
+    public static LocalDate DateToLocalDate(Date dt){
+        LocalDate date = dt.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        return (date);
+    }
+    
     public static java.util.UUID UUIDFromString(String sUUID) throws IllegalArgumentException {
 
         return java.util.UUID.fromString(sUUID);

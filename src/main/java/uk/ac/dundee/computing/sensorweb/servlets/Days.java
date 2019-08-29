@@ -5,8 +5,7 @@
  */
 package uk.ac.dundee.computing.sensorweb.servlets;
 
-import com.datastax.driver.core.Cluster;
-import com.datastax.driver.core.Session;
+import com.datastax.oss.driver.api.core.*;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.ParseException;
@@ -21,6 +20,9 @@ import javax.servlet.annotation.WebInitParam;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.time.LocalDate;
+
+
 import uk.ac.dundee.computing.aec.sensorweb.lib.CassandraHosts;
 import uk.ac.dundee.computing.aec.sensorweb.lib.Convertors;
 import uk.ac.dundee.computing.aec.sensorweb.lib.Utils;
@@ -35,14 +37,14 @@ import uk.ac.dundee.computing.aec.sensorweb.stores.DeviceStore;
 @WebServlet(name = "Days", urlPatterns = {"/Days", "/Days/*"})
 public class Days extends HttpServlet {
 
-    private Cluster cluster = null;
-    private Session session = null;
+
+    private CqlSession session = null;
     private HashMap CommandsMap = new HashMap();
 
     public void init(ServletConfig config) throws ServletException {
 
-        cluster = CassandraHosts.getCluster();
-        session = cluster.newSession();
+        session = CassandraHosts.getCluster();
+        
         CommandsMap.put("JSON", 1);
         CommandsMap.put("D3", 2);
     }
@@ -53,7 +55,7 @@ public class Days extends HttpServlet {
         boolean RenderJSON = false;
         boolean D3 = false;
         int Days = 7;  //DEfault to a week
-        Date Dates[] = new Date[2];
+        LocalDate Dates[] = new LocalDate[2];
         String Device = null;
         String args[] = Convertors.SplitRequestPath(request);
         DeviceModel dm = new DeviceModel();
@@ -81,9 +83,11 @@ public class Days extends HttpServlet {
                 //We actually don't care,  it wasn't a number
             }
         }
-        Dates[1] = Calendar.getInstance().getTime();
+        Date dt=Calendar.getInstance().getTime();
+        Dates[1] = Convertors.DateToLocalDate(dt);
         Utils uu = new Utils();
-        Dates[0] = uu.getLastWeek(Days);
+        dt=uu.getLastWeek(Days);
+        Dates[0] = Convertors.DateToLocalDate(dt);
 
         if (Device != null) {
             DeviceStore dd = null;

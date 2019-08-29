@@ -1,7 +1,7 @@
 <%@page import="uk.ac.dundee.computing.aec.sensorweb.lib.Convertors"%>
 <%@page import="java.net.URL"%>
-<%@page import="com.datastax.driver.core.UserType"%>
-<%@page import="com.datastax.driver.core.UDTValue"%>
+<%@page import="com.datastax.oss.driver.api.core.type.UserDefinedType"%>
+<%@page import="com.datastax.oss.driver.api.core.data.UdtValue"%>
 <%@page import="java.util.Date"%>
 <%@page import="java.util.List"%>
 <%@page import="java.util.Map"%>

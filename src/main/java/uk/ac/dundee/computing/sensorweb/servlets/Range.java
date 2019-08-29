@@ -5,8 +5,7 @@
  */
 package uk.ac.dundee.computing.sensorweb.servlets;
 
-import com.datastax.driver.core.Cluster;
-import com.datastax.driver.core.Session;
+import com.datastax.oss.driver.api.core.*;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.ParseException;
@@ -20,6 +19,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.time.LocalDate;
 import uk.ac.dundee.computing.aec.sensorweb.lib.CassandraHosts;
 import uk.ac.dundee.computing.aec.sensorweb.lib.Convertors;
 import uk.ac.dundee.computing.aec.sensorweb.models.DeviceModel;
@@ -33,14 +33,12 @@ import uk.ac.dundee.computing.aec.sensorweb.stores.DeviceStore;
 @WebServlet(name = "Range", urlPatterns = {"/Range/*"})
 public class Range extends HttpServlet {
 
-    private Cluster cluster = null;
-    private Session session = null;
+    private CqlSession session = null;
     private HashMap CommandsMap = new HashMap();
 
     public void init(ServletConfig config) throws ServletException {
         // TODO Auto-generated method stub
-        cluster = CassandraHosts.getCluster();
-        session = cluster.newSession();
+        session = CassandraHosts.getCluster();
         CommandsMap.put("JSON", 1);
         CommandsMap.put("D3", 2);
     }
@@ -58,7 +56,7 @@ public class Range extends HttpServlet {
             throws ServletException, IOException {
         boolean RenderJSON = false;
         boolean D3 = false;
-        Date Dates[] = new Date[2];
+        LocalDate Dates[] = new LocalDate[2];
         int dateCount = 0;
         String Device = null;
         int Aggregation = 1;
@@ -88,7 +86,7 @@ public class Range extends HttpServlet {
             }
 
             try {
-                Dates[dateCount] = Convertors.StringToDate(args[i]);
+                Dates[dateCount] = Convertors.StringToLocalDate(args[i]);
                 dateCount++;
             } catch (ParseException pEt) {
                 //We actually don't care, it wasn't a date

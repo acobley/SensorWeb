@@ -5,8 +5,7 @@
  */
 package uk.ac.dundee.computing.sensorweb.servlets;
 
-import com.datastax.driver.core.Cluster;
-import com.datastax.driver.core.Session;
+import com.datastax.oss.driver.api.core.*;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.HashMap;
@@ -31,14 +30,13 @@ import uk.ac.dundee.computing.aec.sensorweb.stores.DeviceStore;
 
 public class Devices extends HttpServlet {
 
-    Cluster cluster;
-    Session session;
+ 
+    CqlSession session;
     private HashMap CommandsMap = new HashMap();
 
     public void init(ServletConfig config) throws ServletException {
         // TODO Auto-generated method stub
-        cluster = CassandraHosts.getCluster();
-        session = cluster.newSession();
+        session = CassandraHosts.getCluster();
         CommandsMap.put("JSON", 1);
     }
 
