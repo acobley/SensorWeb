@@ -4,9 +4,8 @@
 
     <groupId>uk.ac.dundee.computing.aec</groupId>
     <artifactId>SensorWeb</artifactId>
-    <version>1.0</version>
     <packaging>war</packaging>
-
+    <version>1.0</version>
     <name>SensorWeb</name>
 
     <properties>
@@ -29,6 +28,11 @@
             <groupId>com.datastax.oss</groupId>
             <artifactId>java-driver-core</artifactId>
             <version>4.1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.eclipsesource.minimal-json</groupId>
+            <artifactId>minimal-json</artifactId>
+            <version>0.9.4</version>
         </dependency>
         <dependency>
             <groupId>javax</groupId>

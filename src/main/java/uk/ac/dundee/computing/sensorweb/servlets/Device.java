@@ -155,17 +155,17 @@ request.setAttribute("Path", request.getRequestURI());
                              
                              break;
                     case 3 :data = value[0].getBytes("ASCII");
-                             //sJSON=new String(data);
-                             sJSON=value[0];
-                             sJSON=sJSON.replace("\r", "");
-                             sJSON=sJSON.replace("\n", "");
+                             sJSON=new String(data);
+                             //sJSON=value[0];
+                            
                              break;
                     default:
                              break;
         } }
             
             
-            
+             sJSON=sJSON.replace("\r", "");
+             sJSON=sJSON.replace("\n", "");
             Socket sc = null;
             boolean sent = false;
             String ip = "172.17.0.4";
@@ -189,6 +189,7 @@ request.setAttribute("Path", request.getRequestURI());
             }
  
         }
+        response.sendRedirect("/SensorWeb/Devices");
     }
 
     /**

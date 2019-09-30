@@ -12,8 +12,12 @@ and open the template in the editor.
     </head>
     <body>
         <div>Post</div>
-        <form action="http://34.73.199.125/SensorWeb/Device" method="POST" enctype='application/x-www-form-urlencoded'>
-            <textarea id="JSON" name="JSON"
+        <form action="https://us-central1-devops-2018-218513.cloudfunctions.net/growappfunc" method="POST" enctype='application/x-www-form-urlencoded'>
+            <textarea id="b64History" name="b64History"
+          rows="5" cols="33">
+
+            </textarea><br>
+            <textarea id="startupTime" name="startupTime"
           rows="5" cols="33">
 
 </textarea>
@@ -21,3 +25,4 @@ and open the template in the editor.
         </form>
     </body>
 </html>
+

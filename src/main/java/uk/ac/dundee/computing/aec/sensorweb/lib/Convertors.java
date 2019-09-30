@@ -176,6 +176,20 @@ public final class Convertors {
 
     }
 
+    
+    public static Date JavaScriptStringToDate(String dd) throws ParseException {
+        Calendar cl = Calendar.getInstance();
+        SimpleDateFormat sdf = new SimpleDateFormat("EE MMM d y H:m:s 'GMT'Z (zz)");
+        try {
+            cl.setTime(sdf.parse(dd));
+        } catch (ParseException et) {
+            System.out.println("Can't convert date" + et);
+            throw et;
+        }
+        Date dt = cl.getTime();
+        return (dt);
+    }
+    
     public static Date StringToDate(String dd) throws ParseException {
         Calendar cl = Calendar.getInstance();
         SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM d HH:mm:ss zzz yyyy");

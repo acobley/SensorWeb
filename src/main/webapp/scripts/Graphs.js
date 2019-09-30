@@ -178,7 +178,9 @@ function getGraphsPeriodData(Period) {
 }
 
 window.onload = function () {
-    
+    d3.select("#days180").on('click', function () {
+        getGraphsPeriodData(180);
+    });
     d3.select("#days30").on('click', function () {
         getGraphsPeriodData(30);
     });

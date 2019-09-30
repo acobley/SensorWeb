@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+http://34.73.199.125/SensorWeb/Translate
+-->
+<html>
+    <head>
+        <title>Test Post</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <div>Post</div>
+                <form action="http://34.73.199.125/SensorWeb/Translate" method="POST" enctype='application/x-www-form-urlencoded'>
+
+        Sensor Name  <input type="text" id="name" name="name" required
+                            minlength="4" maxlength="20" size="10"><br>
+        Latitude  <input type="text" id="latitude" name="latitude" required
+                            minlength="4" maxlength="20" size="10"><br>
+        Longitude  <input type="text" id="longitude" name="longitude" required
+                            minlength="4" maxlength="20" size="10"><br>
+        UserId  <input type="text" id="UserId" name="UserId" required
+                            minlength="4" maxlength="20" size="10"><br>
+        B64:   <textarea id="b64History" name="b64History"
+          rows="5" cols="33">
+
+            </textarea><br>
+        B64:   <textarea id="Meta" name="Meta"
+          rows="5" cols="33">
+
+            </textarea><br>
+            
+            <button>Send</button>
+        </form>
+    </body>
+</html>
+

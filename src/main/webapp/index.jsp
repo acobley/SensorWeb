@@ -59,6 +59,7 @@
                 if (Device != null) {%>
 
         <a href="<%=PATH%>/JSON">Get json for this page</a><br>
+        <button id="days180" >Draw 180 Days Graph</button><br>
         <button id="days30" >Draw 30 Days Graph</button><br>
         <button id="days14">Draw 14 Days Graph</button><br>
         <button id="days7">Draw 7 Days Graph</button><br>
