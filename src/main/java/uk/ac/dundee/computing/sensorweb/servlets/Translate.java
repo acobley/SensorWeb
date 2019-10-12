@@ -11,21 +11,33 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Date;
 import java.util.Scanner;
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebInitParam;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.sql.DataSource;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import uk.ac.dundee.computing.aec.sensorweb.lib.B64Util;
 import uk.ac.dundee.computing.aec.sensorweb.lib.Convertors;
+import uk.ac.dundee.computing.aec.sensorweb.lib.Dbutils;
+import uk.ac.dundee.computing.aec.sensorweb.lib.Utils;
 import uk.ac.dundee.computing.aec.sensorweb.lib.Web;
+import uk.ac.dundee.computing.aec.sensorweb.models.ReadingsModel;
+import uk.ac.dundee.computing.aec.sensorweb.stores.B64Data;
 
 /**
  *
  * @author andyc
  */
-@WebServlet(name = "Translate", urlPatterns = {"/Translate"})
+@WebServlet(name = "Translate", urlPatterns = {"/Translate"},
+        initParams = {
+            @WebInitParam(name = "data-source", value = "jdbc/Sensordb")
+        }
+)
 public class Translate extends HttpServlet {
 
     /**
@@ -37,6 +49,15 @@ public class Translate extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
+    private DataSource _ds = null;
+
+    public void init(ServletConfig config) throws ServletException {
+        // TODO Auto-generated method stub
+        Dbutils db = new Dbutils();
+
+        _ds = db.assemble(config);
+    }
+
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
@@ -94,18 +115,27 @@ public class Translate extends HttpServlet {
         System.out.println(Longitude);
         System.out.println(UserId);
         System.out.println(Meta);
+        
+        //Following is a placeholder for java conversion routine
+        //B64Data data = Utils.ConvertB64(b64History);
+        
         //String  startupTime = request.getParameter("startupTime");
         //String Data="{\"b64History\":\""+b64Hist+"\",\"startupTime\":\""+startupTime+"\"}";
         //System.out.print("Recived b64 History ");
-        //System.out.println(b64History);
+        System.out.println(b64History);
 
+        ReadingsModel rd=new ReadingsModel();
+        rd.StoreReading(Name, b64History, Meta, _ds);
+        B64Data b64=B64Util.HeaderB64(b64History);
+       
+        b64=B64Util.PayloadB64(b64History, b64);
         String Response = Web.GetJson("https://us-central1-devops-2018-218513.cloudfunctions.net/DataDecode", b64History);
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
             out.println(Response);
         }
         Scanner scanner = new Scanner(Response);
-        if (scanner.hasNextLine()){
+        if (scanner.hasNextLine()) {
             String line = scanner.nextLine();
         }
         while (scanner.hasNextLine()) {
@@ -118,13 +148,13 @@ public class Translate extends HttpServlet {
             String Soiltemperature = items[3];
             String SoilVWC = items[4];
             String Batterylevel = items[5];
-            
-            try{
-                Date dd=Convertors.JavaScriptStringToDate(dDate);
-                dDate=dd.toString();
-            }catch(Exception et){
-                    System.out.println("Can't parse Python Date " + et);
-                    }
+
+            try {
+                Date dd = Convertors.JavaScriptStringToDate(dDate);
+                dDate = dd.toString();
+            } catch (Exception et) {
+                System.out.println("Can't parse Python Date " + et);
+            }
             JSONArray jsonSensors = new JSONArray();
             JSONObject Record = null;
             Record = new JSONObject();
@@ -171,7 +201,7 @@ public class Translate extends HttpServlet {
                     out.close();
                     sc.close();
                     sent = true;
-                    System.out.println(json);
+                   // System.out.println(json);
                 } catch (Exception et) {
                     System.out.println("No Host " + Name + " : " + ip);
                     try {
