@@ -11,6 +11,7 @@ import java.time.Instant;
 import java.util.Calendar;
 import java.util.Date;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 
 public final class Convertors {
@@ -176,7 +177,6 @@ public final class Convertors {
 
     }
 
-    
     public static Date JavaScriptStringToDate(String dd) throws ParseException {
         Calendar cl = Calendar.getInstance();
         SimpleDateFormat sdf = new SimpleDateFormat("EE MMM d y H:m:s 'GMT'Z (zz)");
@@ -189,7 +189,7 @@ public final class Convertors {
         Date dt = cl.getTime();
         return (dt);
     }
-    
+
     public static Date StringToDate(String dd) throws ParseException {
         Calendar cl = Calendar.getInstance();
         SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM d HH:mm:ss zzz yyyy");
@@ -202,7 +202,7 @@ public final class Convertors {
         Date dt = cl.getTime();
         return (dt);
     }
-    
+
     public static LocalDate StringToLocalDate(String dd) throws ParseException {
         Calendar cl = Calendar.getInstance();
         SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM d HH:mm:ss zzz yyyy");
@@ -213,20 +213,64 @@ public final class Convertors {
             throw et;
         }
         Date dt = cl.getTime();
-        LocalDate date =DateToLocalDate(dt);
-         return (date);
+        LocalDate date = DateToLocalDate(dt);
+        return (date);
     }
-    public static  Instant LocalDateToInstant(LocalDate dt){
-        Instant i= dt.atStartOfDay(ZoneId.systemDefault()).toInstant();
+
+    public static LocalDateTime StringToLocalDateTime(String dd) throws ParseException {
+        Calendar cl = Calendar.getInstance();
+        SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM d HH:mm:ss zzz yyyy");
+        try {
+            cl.setTime(sdf.parse(dd));
+        } catch (ParseException et) {
+            //Try Mon Oct 7 13:04:36 BST 2019
+
+            System.out.println("Can't convert date" + et);
+            throw et;
+        }
+        Date dt = cl.getTime();
+        LocalDateTime date = DateToLocalDateTime(dt);
+        return (date);
+    }
+
+    public static Instant LocalDateToInstant(LocalDate dt) {
+        Instant i = dt.atStartOfDay(ZoneId.systemDefault()).toInstant();
         return i;
     }
-    public static LocalDate DateToLocalDate(Date dt){
+
+    public static LocalDate DateToLocalDate(Date dt) {
         LocalDate date = dt.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
         return (date);
     }
-    
+
+    public static LocalDateTime DateToLocalDateTime(Date dt) {
+        LocalDateTime date = dt.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+        return (date);
+    }
+
     public static java.util.UUID UUIDFromString(String sUUID) throws IllegalArgumentException {
 
         return java.util.UUID.fromString(sUUID);
     }
+
+    public static double minmax(double value, double min, double max) {
+        return Math.max(Math.min(value, max), min);
+    }
+
+    public static double convertTemperatureData(double value) {
+        return 0.0473711045 * value + -11.19891627;
+    }
+
+    public static double convertBatteryData(double value) {
+        return minmax(0.2865304553 * value + -177.3583506, 0, 100);
+    }
+
+    public static double convertMoistureData(double value) {
+        return minmax(0.179814297 * value + -40.76741498, 0, 100);
+    }
+
+    public static double convertLightData(double value) {
+        return (10981.31391 * Math.exp(1 / value) + -10981.3812);
+    }
+
 }
