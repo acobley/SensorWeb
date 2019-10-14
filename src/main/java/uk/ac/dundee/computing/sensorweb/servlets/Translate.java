@@ -9,7 +9,9 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.Scanner;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -21,6 +23,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import java.time.LocalDateTime;
 import uk.ac.dundee.computing.aec.sensorweb.lib.B64Util;
 import uk.ac.dundee.computing.aec.sensorweb.lib.Convertors;
 import uk.ac.dundee.computing.aec.sensorweb.lib.Dbutils;
@@ -28,6 +31,7 @@ import uk.ac.dundee.computing.aec.sensorweb.lib.Utils;
 import uk.ac.dundee.computing.aec.sensorweb.lib.Web;
 import uk.ac.dundee.computing.aec.sensorweb.models.ReadingsModel;
 import uk.ac.dundee.computing.aec.sensorweb.stores.B64Data;
+import uk.ac.dundee.computing.aec.sensorweb.stores.Sensordata;
 
 /**
  *
@@ -129,6 +133,8 @@ public class Translate extends HttpServlet {
         B64Data b64=B64Util.HeaderB64(b64History);
        
         b64=B64Util.PayloadB64(b64History, b64);
+        ArrayList<Sensordata> sensorData=b64.getSensorData();
+        /*
         String Response = Web.GetJson("https://us-central1-devops-2018-218513.cloudfunctions.net/DataDecode", b64History);
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
@@ -138,9 +144,16 @@ public class Translate extends HttpServlet {
         if (scanner.hasNextLine()) {
             String line = scanner.nextLine();
         }
-        while (scanner.hasNextLine()) {
-            String line = scanner.nextLine();
+        */
+        
+        Iterator<Sensordata> iter 
+            = sensorData.iterator(); 
+//        while (scanner.hasNextLine()) {
+//            String line = scanner.nextLine();
             // process the line
+            while (iter.hasNext()) { 
+                Sensordata sd=iter.next();
+            /*    
             String[] items = line.split(",");
             String dDate = items[0];
             String Airtemperature = items[1];
@@ -148,13 +161,21 @@ public class Translate extends HttpServlet {
             String Soiltemperature = items[3];
             String SoilVWC = items[4];
             String Batterylevel = items[5];
-
             try {
                 Date dd = Convertors.JavaScriptStringToDate(dDate);
                 dDate = dd.toString();
             } catch (Exception et) {
                 System.out.println("Can't parse Python Date " + et);
             }
+            */
+            LocalDateTime dd = sd.ReadingTime;
+            double Airtemperature = sd.fAirTemp;
+            double SoilEC = sd.dsoilEC;
+            double Soiltemperature = sd.fSoilTemp;
+            double SoilVWC = sd.dsoilVWC;
+            double Batterylevel = sd.dBatteryLevel;
+            
+            
             JSONArray jsonSensors = new JSONArray();
             JSONObject Record = null;
             Record = new JSONObject();
@@ -179,7 +200,7 @@ public class Translate extends HttpServlet {
             jsonSensors.put(Record);
             JSONObject jsonDevice = new JSONObject();
             jsonDevice.put("device", Name);
-            jsonDevice.put("insertion_time", dDate);
+            jsonDevice.put("insertion_time", dd);
             JSONObject jsonMeta = new JSONObject();
             jsonMeta.put("Latitude", lat);
             jsonMeta.put("Longitude", Longitude);
@@ -220,7 +241,8 @@ public class Translate extends HttpServlet {
             }
 
         }
-        scanner.close();
+            
+        //scanner.close();
 
     }
 

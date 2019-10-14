@@ -20,6 +20,7 @@ import uk.ac.dundee.computing.aec.sensorweb.stores.B64Data;
  * @author andyc
  */
 public class B64Util {
+
     public static byte[] Convert64(String B64) {
         JsonObject Record = null;
         try {
@@ -28,10 +29,9 @@ public class B64Util {
             System.out.println("Can't parse string into JSON");
             System.exit(-1);
         }
-        
 
         String B64History = Record.get("b64History").asString();
-        
+
         byte[] nb = null;
         byte[] Decoded = null;
         try {
@@ -108,7 +108,7 @@ public class B64Util {
     public static B64Data PayloadB64(String B64, B64Data data) {
         int HEADER_SIZE = 0x10;
         byte[] Decoded = Convert64(B64);
-        
+
         LocalDateTime StartDate = B64StartDateTime(B64);
         LocalDateTime ReadingDate = null;
         try {
@@ -132,10 +132,18 @@ public class B64Util {
             int soilVWC = Uint16(Decoded[offset + 0x8], Decoded[offset + 0x8 + 1]);
             int batteryLevel = Uint16(Decoded[offset + 0xa], Decoded[offset + 0xa + 1]);
 
-            double fAirTemp = Convertors.convertTemperatureData((double) airTemp);
-            double fSoilTemp = Convertors.convertTemperatureData((double) soilTemp);
+            double dAirTemp = Convertors.convertTemperatureData((double) airTemp);
+            double dSoilTemp = Convertors.convertTemperatureData((double) soilTemp);
+            double dBatteryLevel = Convertors.convertBatteryData((double) batteryLevel);
+            double dsoilEC = Convertors.convertMoistureData((double) soilEC);
+            double dsoilVWC = Convertors.convertMoistureData((double) soilVWC);
+            double dlight = Convertors.convertLightData((double) light);
             data.addSensorData(airTemp, light, soilEC, soilTemp, soilVWC, batteryLevel,
-                    fAirTemp, fSoilTemp,dt);
+                    dAirTemp, dSoilTemp,
+                    dBatteryLevel,
+                    dsoilEC,
+                    dsoilVWC,
+                    dlight, dt);
 
         }
 

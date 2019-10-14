@@ -23,37 +23,7 @@ public class B64Data {
        long Period;
        ArrayList<Sensordata> sensorData;
        
-    private class Sensordata{
-       int airTemp=0;
-        int light=0;
-        int soilEC=0;
-        int soilTemp=0;
-        int soilVWC=0;
-        int batteryLevel=0;
-        double fAirTemp=0;
-        double fSoilTemp=0;
-        LocalDateTime ReadingTime=null;
-        Sensordata(int airTemp,
-        int light,
-        int soilEC,
-        int soilTemp,
-        int soilVWC,
-        int batteryLevel,
-        double fAirTemp,
-        double fSoilTemp,
-        LocalDateTime ReadingTime
-        ){
-            this.light=light;
-            this.batteryLevel=batteryLevel;
-            this.airTemp=airTemp;
-            this.soilEC=soilEC;
-            this.soilTemp=soilTemp;
-            this.soilVWC=soilVWC;
-            this.fAirTemp=fAirTemp;
-            this.fSoilTemp=fSoilTemp; 
-            this.ReadingTime=ReadingTime;
-        }
-    }   
+   
     
     public B64Data(){
         sensorData = new ArrayList<Sensordata>();
@@ -77,7 +47,10 @@ public class B64Data {
     public  void Period(long Period){        
         this.Period=Period;
     }
-    
+    public ArrayList<Sensordata> getSensorData(){
+        return sensorData;
+    }
+            
     public void addSensorData(int airTemp,
         int light,
         int soilEC,
@@ -86,6 +59,10 @@ public class B64Data {
         int batteryLevel,
          double fAirTemp,
         double fSoilTemp,
+        double dBatteryLevel,
+            double dsoilEC,
+            double dsoilVWC,
+            double dlight,
         LocalDateTime ReadingTime){
         sensorData.add(new Sensordata(airTemp,
         light,
@@ -95,6 +72,10 @@ public class B64Data {
         batteryLevel,
         fAirTemp,
         fSoilTemp,
+         dBatteryLevel,
+         dsoilEC,
+         dsoilVWC,
+         dlight,
         ReadingTime));
         
     }
