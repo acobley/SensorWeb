@@ -123,54 +123,20 @@ public class Translate extends HttpServlet {
         System.out.println(lat);
         System.out.println(Longitude);
         System.out.println(UserId);
-        System.out.println(Meta);
-
-        //Following is a placeholder for java conversion routine
-        //B64Data data = Utils.ConvertB64(b64History);
-        //String  startupTime = request.getParameter("startupTime");
-        //String Data="{\"b64History\":\""+b64Hist+"\",\"startupTime\":\""+startupTime+"\"}";
-        //System.out.print("Recived b64 History ");
-        //System.out.println(b64History);
+        System.out.println(Meta);   
         ReadingsModel rd = new ReadingsModel();
         rd.StoreReading(Name, b64History, Meta, _ds);
         B64Data b64 = B64Util.HeaderB64(b64History);
 
         b64 = B64Util.PayloadB64(b64History, b64);
         ArrayList<Sensordata> sensorData = b64.getSensorData();
-        /*
-        String Response = Web.GetJson("https://us-central1-devops-2018-218513.cloudfunctions.net/DataDecode", b64History);
-        response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            out.println(Response);
-        }
-        Scanner scanner = new Scanner(Response);
-        if (scanner.hasNextLine()) {
-            String line = scanner.nextLine();
-        }
-         */
-
+ 
         Iterator<Sensordata> iter
                 = sensorData.iterator();
-//        while (scanner.hasNextLine()) {
-//            String line = scanner.nextLine();
-        // process the line
+
         while (iter.hasNext()) {
             Sensordata sd = iter.next();
-            /*    
-            String[] items = line.split(",");
-            String dDate = items[0];
-            String Airtemperature = items[1];
-            String SoilEC = items[2];
-            String Soiltemperature = items[3];
-            String SoilVWC = items[4];
-            String Batterylevel = items[5];
-            try {
-                Date dd = Convertors.JavaScriptStringToDate(dDate);
-                dDate = dd.toString();
-            } catch (Exception et) {
-                System.out.println("Can't parse Python Date " + et);
-            }
-             */
+            
             LocalDateTime dd = sd.ReadingTime;
             TimeZone tz= sd.tz;
             double Airtemperature = sd.fAirTemp;
@@ -256,6 +222,8 @@ public class Translate extends HttpServlet {
             }
 
         }
+       
+        rd.StoreLastEntryIndex(Name, b64.getLastIndex(), _ds);
         request.setAttribute("Data", sensorData);
         RequestDispatcher rdjson = request.getRequestDispatcher("/RenderJson");
         rdjson.forward(request, response);

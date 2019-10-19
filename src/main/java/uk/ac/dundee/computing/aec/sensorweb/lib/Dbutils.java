@@ -105,6 +105,19 @@ public class Dbutils {
 			System.out.println("Can not create table "+ex);
 			return;
 		}
+                
+                sqlQuery = "CREATE TABLE IF NOT EXISTS `LastEntryIndex` ("
+				+ "`idEntry` INT NOT NULL AUTO_INCREMENT," 
+                                + "`name` VARCHAR(45) NULL,"
+                                + "`LastEntryIndex` INT NULL,"
+				+ "PRIMARY KEY (`idEntry`))" + "ENGINE = InnoDB;";
+		try {
+			pmst = Conn.prepareStatement(sqlQuery);
+			pmst.executeUpdate();
+		} catch (Exception ex) {
+			System.out.println("Can not create table "+ex);
+			return;
+		}
          }
 	// create the schema if it doesn't exist
 	private void CreateSchema(DataSource _ds) {

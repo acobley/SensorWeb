@@ -5,6 +5,7 @@
  */
 package uk.ac.dundee.computing.aec.sensorweb.models;
 
+import com.datastax.oss.driver.api.core.cql.Row;
 import com.eclipsesource.json.Json;
 import com.eclipsesource.json.JsonObject;
 import com.eclipsesource.json.JsonValue;
@@ -15,6 +16,7 @@ import java.sql.ResultSet;
 import java.util.Date;
 import javax.sql.DataSource;
 import uk.ac.dundee.computing.aec.sensorweb.lib.Convertors;
+import uk.ac.dundee.computing.aec.sensorweb.stores.DeviceStore;
 
 /**
  *
@@ -66,7 +68,7 @@ public class ReadingsModel {
                 System.out.println("Can't parse Python Date " + et);
             }
             pmst.setDate(9, new java.sql.Date(dDate.getTime()));
-            int len=B64History.length();
+            int len = B64History.length();
             pmst.setString(10, B64History);
             pmst.executeUpdate();
         } catch (Exception ex) {
@@ -74,5 +76,59 @@ public class ReadingsModel {
             return -1;
         }
         return 0;
+    }
+
+    public int StoreLastEntryIndex(String Name, long LastEntryIndex, DataSource _ds) {
+        this._ds = _ds;
+        PreparedStatement pmst = null;
+        Connection Conn;
+        try {
+            Conn = _ds.getConnection();
+        } catch (Exception et) {
+            return -1;
+        }
+
+        String sqlQuery = "INSERT INTO `LastEntryIndex` "
+                + "(`name`,`LastEntryIndex`) "
+                + "VALUES (?,?);";
+        try {
+            pmst = Conn.prepareStatement(sqlQuery);
+            pmst.setString(1, Name);
+            pmst.setLong(2, LastEntryIndex);
+
+            pmst.executeUpdate();
+        } catch (Exception ex) {
+            System.out.println("Can not insert data into LastEntryIndex " + ex);
+            return -1;
+        }
+        return 0;
+    }
+
+    public long getLastIndex(String Name, DataSource _ds) {
+
+        this._ds = _ds;
+        PreparedStatement pmst = null;
+        Connection Conn;
+        long LastIndex=0;
+        try {
+            Conn = _ds.getConnection();
+        } catch (Exception et) {
+            return -1;
+        }
+        String sqlQuery = "select * from LastEntryIndex where name=? ;";
+        try {
+            pmst = Conn.prepareStatement(sqlQuery);
+            pmst.setString(1, Name);
+
+            ResultSet rs = pmst.executeQuery();
+            while (rs.next()) {
+            
+            LastIndex = rs.getLong("LastEntryIndex");
+            }
+        } catch (Exception ex) {
+            System.out.println("Can not insert data into LastEntryIndex " + ex);
+            return 0;
+        }
+        return LastIndex;
     }
 }

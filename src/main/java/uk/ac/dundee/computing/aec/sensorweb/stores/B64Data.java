@@ -29,7 +29,10 @@ public class B64Data {
     public B64Data(){
         sensorData = new ArrayList<Sensordata>();
     }
-    
+   
+    public long getLastIndex(){
+        return LastIndex;
+    }
     public  void SetNbEntries(int nbEntries){        
         this.nbEntries=nbEntries;
     }
