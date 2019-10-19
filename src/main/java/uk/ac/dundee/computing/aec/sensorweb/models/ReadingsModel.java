@@ -20,7 +20,6 @@ import uk.ac.dundee.computing.aec.sensorweb.lib.Convertors;
  *
  * @author andyc
  */
-
 public class ReadingsModel {
 
     private DataSource _ds = null;
@@ -41,7 +40,7 @@ public class ReadingsModel {
         JsonValue jCurrentSessionID = jMeta.get("CurrentSessionID");
         JsonValue jCurrentSessionStartIndex = jMeta.get("CurrentSessionStartIndex");
         JsonValue jCurrentSessionPeriod = jMeta.get("CurrentSessionPeriod");
-        JsonValue jFlowerPowercurenttime = jMeta.get("FlowerPowercurenttime");
+        JsonValue jFlowerPowercurenttime = jMeta.get("FlowerPowercurrenttime");
         JsonValue jMobileTime = jMeta.get("MobileTime");
         String sqlQuery = "INSERT INTO `Readings` "
                 + "(`name`,`LastEntryIndex`,`Nbentries`,`TransferStartIndex`,`CurrentSessionId`,"
@@ -57,22 +56,18 @@ public class ReadingsModel {
             pmst.setInt(5, jCurrentSessionID.asInt());
             pmst.setInt(6, jCurrentSessionStartIndex.asInt());
             pmst.setInt(7, jCurrentSessionPeriod.asInt());
-            Date dDate=null;
+            pmst.setInt(8, jFlowerPowercurenttime.asInt());
+            Date dDate = null;
+
             try {
-               dDate = Convertors.JavaScriptStringToDate(jFlowerPowercurenttime.asString());
-                
+                dDate = Convertors.StringToDate(jMobileTime.asString());
+
             } catch (Exception et) {
                 System.out.println("Can't parse Python Date " + et);
             }
-             pmst.setDate(8, (java.sql.Date) dDate);
-              try {
-               dDate = Convertors.JavaScriptStringToDate(jMobileTime.asString());
-                
-            } catch (Exception et) {
-                System.out.println("Can't parse Python Date " + et);
-            }
-             pmst.setDate(9, (java.sql.Date) dDate);
-             pmst.setString(10,B64History);
+            pmst.setDate(9, new java.sql.Date(dDate.getTime()));
+            int len=B64History.length();
+            pmst.setString(10, B64History);
             pmst.executeUpdate();
         } catch (Exception ex) {
             System.out.println("Can not insert data into Readings " + ex);

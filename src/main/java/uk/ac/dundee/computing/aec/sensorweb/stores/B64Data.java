@@ -9,6 +9,7 @@ import com.eclipsesource.json.JsonObject;
 import com.eclipsesource.json.JsonValue;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.TimeZone;
 
 /**
  *
@@ -63,7 +64,8 @@ public class B64Data {
             double dsoilEC,
             double dsoilVWC,
             double dlight,
-        LocalDateTime ReadingTime){
+        LocalDateTime ReadingTime,
+        TimeZone tz){
         sensorData.add(new Sensordata(airTemp,
         light,
         soilEC,
@@ -76,7 +78,8 @@ public class B64Data {
          dsoilEC,
          dsoilVWC,
          dlight,
-        ReadingTime));
+        ReadingTime,
+        tz));
         
     }
     

@@ -27,8 +27,8 @@ import uk.ac.dundee.computing.aec.sensorweb.stores.DeviceStore;
 public final class CassandraHosts {
 
     //static String Host = "node1";  //at least one starting point to talk to
-    static String Host = "172.17.0.2";  //Docker container
-    //static String Host = "127.0.0.1"; // Local host
+    //static String Host = "172.17.0.2";  //Docker container
+    static String Host = "127.0.0.1"; // Local host
     public CassandraHosts() {
 
     }

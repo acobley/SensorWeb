@@ -94,9 +94,9 @@ public class Dbutils {
                                 + "`CurrentSessionId` INT NULL,"
                                 + "`CurrentSessionStartIndex` INT NULL,"
                                 + "`CurrentSessionPeriod` INT NULL,"
-                                + "`FlowerPowercurrenttime` DateTime NULL,"
+                                + "`FlowerPowercurrenttime` INT NULL,"
                                 + "`MobileTime` DateTime NULL,"
-                                + "`B64History` VARCHAR(2048) NULL,"
+                                + "`B64History` TEXT NULL,"
 				+ "PRIMARY KEY (`idReading`))" + "ENGINE = InnoDB;";
 		try {
 			pmst = Conn.prepareStatement(sqlQuery);

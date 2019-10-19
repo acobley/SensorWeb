@@ -6,6 +6,7 @@
 package uk.ac.dundee.computing.aec.sensorweb.stores;
 
 import java.time.LocalDateTime;
+import java.util.TimeZone;
 
 /**
  *
@@ -26,7 +27,18 @@ public class Sensordata {
     public double dsoilVWC = 0;
     public double dlight = 0;
     public LocalDateTime ReadingTime = null;
+    public TimeZone tz=null;
 
+    
+    public double getfAirTemp(){return fAirTemp; };
+    public double getfSoilTemp(){return fSoilTemp; };
+    public double getdBatteryLevel(){return dBatteryLevel ; };
+    public double getdsoilEC(){return dsoilEC;};
+    public double getdsoilVWC(){return dsoilVWC; };
+    public double getdlight(){return dlight;};
+    public LocalDateTime getReadingTime(){return ReadingTime;};
+    public String getTZ(){return tz.getDisplayName();};
+    
     Sensordata(int airTemp,
             int light,
             int soilEC,
@@ -39,7 +51,8 @@ public class Sensordata {
             double dsoilEC,
             double dsoilVWC,
             double dlight,
-            LocalDateTime ReadingTime
+            LocalDateTime ReadingTime,
+            TimeZone tz
     ) {
         this.light = light;
         this.batteryLevel = batteryLevel;
@@ -54,5 +67,6 @@ public class Sensordata {
         this.dsoilVWC = dsoilVWC;
         this.dlight = dlight;
         this.ReadingTime = ReadingTime;
+        this.tz=tz;
     }
 }

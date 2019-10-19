@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
@@ -24,6 +25,10 @@ import javax.sql.DataSource;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.TimeZone;
+import javax.servlet.RequestDispatcher;
 import uk.ac.dundee.computing.aec.sensorweb.lib.B64Util;
 import uk.ac.dundee.computing.aec.sensorweb.lib.Convertors;
 import uk.ac.dundee.computing.aec.sensorweb.lib.Dbutils;
@@ -105,8 +110,8 @@ public class Translate extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String ip = "172.17.0.4";
-        //String ip = "127.0.0.1";
+        //String ip = "172.17.0.4";
+        String ip = "127.0.0.1";
         long Millis = 1;
         String b64History = request.getParameter("b64History");
         String Name = request.getParameter("name");
@@ -119,21 +124,19 @@ public class Translate extends HttpServlet {
         System.out.println(Longitude);
         System.out.println(UserId);
         System.out.println(Meta);
-        
+
         //Following is a placeholder for java conversion routine
         //B64Data data = Utils.ConvertB64(b64History);
-        
         //String  startupTime = request.getParameter("startupTime");
         //String Data="{\"b64History\":\""+b64Hist+"\",\"startupTime\":\""+startupTime+"\"}";
         //System.out.print("Recived b64 History ");
-        System.out.println(b64History);
-
-        ReadingsModel rd=new ReadingsModel();
+        //System.out.println(b64History);
+        ReadingsModel rd = new ReadingsModel();
         rd.StoreReading(Name, b64History, Meta, _ds);
-        B64Data b64=B64Util.HeaderB64(b64History);
-       
-        b64=B64Util.PayloadB64(b64History, b64);
-        ArrayList<Sensordata> sensorData=b64.getSensorData();
+        B64Data b64 = B64Util.HeaderB64(b64History);
+
+        b64 = B64Util.PayloadB64(b64History, b64);
+        ArrayList<Sensordata> sensorData = b64.getSensorData();
         /*
         String Response = Web.GetJson("https://us-central1-devops-2018-218513.cloudfunctions.net/DataDecode", b64History);
         response.setContentType("text/html;charset=UTF-8");
@@ -144,15 +147,15 @@ public class Translate extends HttpServlet {
         if (scanner.hasNextLine()) {
             String line = scanner.nextLine();
         }
-        */
-        
-        Iterator<Sensordata> iter 
-            = sensorData.iterator(); 
+         */
+
+        Iterator<Sensordata> iter
+                = sensorData.iterator();
 //        while (scanner.hasNextLine()) {
 //            String line = scanner.nextLine();
-            // process the line
-            while (iter.hasNext()) { 
-                Sensordata sd=iter.next();
+        // process the line
+        while (iter.hasNext()) {
+            Sensordata sd = iter.next();
             /*    
             String[] items = line.split(",");
             String dDate = items[0];
@@ -167,15 +170,15 @@ public class Translate extends HttpServlet {
             } catch (Exception et) {
                 System.out.println("Can't parse Python Date " + et);
             }
-            */
+             */
             LocalDateTime dd = sd.ReadingTime;
+            TimeZone tz= sd.tz;
             double Airtemperature = sd.fAirTemp;
             double SoilEC = sd.dsoilEC;
             double Soiltemperature = sd.fSoilTemp;
             double SoilVWC = sd.dsoilVWC;
             double Batterylevel = sd.dBatteryLevel;
-            
-            
+
             JSONArray jsonSensors = new JSONArray();
             JSONObject Record = null;
             Record = new JSONObject();
@@ -200,7 +203,19 @@ public class Translate extends HttpServlet {
             jsonSensors.put(Record);
             JSONObject jsonDevice = new JSONObject();
             jsonDevice.put("device", Name);
-            jsonDevice.put("insertion_time", dd);
+            DateTimeFormatter sdf = DateTimeFormatter
+                    .ofPattern("EEE MMM d HH:mm:ss zzz yyyy");
+            
+            try{
+                
+                String sDate=sdf.withZone(tz.toZoneId()).format(dd);
+                LocalDateTime formatDateTime = LocalDateTime.parse(sDate,sdf);
+               jsonDevice.put("insertion_time", sDate);
+            }catch( Exception et){
+                System.out.println("Can't format date for sending to Sensor " +et );
+                
+            }
+            jsonDevice.put("TimeZone",tz.getDisplayName());
             JSONObject jsonMeta = new JSONObject();
             jsonMeta.put("Latitude", lat);
             jsonMeta.put("Longitude", Longitude);
@@ -222,7 +237,7 @@ public class Translate extends HttpServlet {
                     out.close();
                     sc.close();
                     sent = true;
-                   // System.out.println(json);
+                    // System.out.println(json);
                 } catch (Exception et) {
                     System.out.println("No Host " + Name + " : " + ip);
                     try {
@@ -241,7 +256,9 @@ public class Translate extends HttpServlet {
             }
 
         }
-            
+        request.setAttribute("Data", sensorData);
+        RequestDispatcher rdjson = request.getRequestDispatcher("/RenderJson");
+        rdjson.forward(request, response);
         //scanner.close();
 
     }

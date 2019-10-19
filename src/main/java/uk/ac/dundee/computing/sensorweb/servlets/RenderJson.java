@@ -77,6 +77,74 @@ public class RenderJson extends HttpServlet {
         }
     }
 
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        // TODO Auto-generated method stub
+        Object temp = request.getAttribute("Data");
+        Class c = temp.getClass();
+        String className = c.getName();
+        if ((className.compareTo("java.util.LinkedList") == 0) || (className.compareTo("java.util.ArrayList") == 0)) { //Deal with a linked list
+
+            if (className.compareTo("java.util.LinkedList") == 0) {
+                List Data = (List) request.getAttribute("Data");
+                Iterator iterator;
+                JSONObject JSONObj = new JSONObject();
+                JSONArray Parts = new JSONArray();
+                iterator = Data.iterator();
+                while (iterator.hasNext()) {
+                    Object Value = iterator.next();
+                    JSONObject obj = ProcessObject(Value);
+                    try {
+                        Parts.put(obj);
+                    } catch (Exception JSONet) {
+                        System.out.println("JSON Fault" + JSONet);
+                    }
+                }
+                try {
+                    JSONObj.put("Data", Parts);
+                } catch (Exception JSONet) {
+                    System.out.println("JSON Fault" + JSONet);
+                }
+                if (JSONObj != null) {
+                    PrintWriter out = response.getWriter();
+                    out.print(JSONObj);
+                }
+            }
+            if (className.compareTo("java.util.ArrayList") == 0) {
+                ArrayList Data = (ArrayList) request.getAttribute("Data");
+                Iterator iterator;
+                JSONObject JSONObj = new JSONObject();
+                JSONArray Parts = new JSONArray();
+                iterator = Data.iterator();
+                while (iterator.hasNext()) {
+                    Object Value = iterator.next();
+                    JSONObject obj = ProcessObject(Value);
+                    try {
+                        Parts.put(obj);
+                    } catch (Exception JSONet) {
+                        System.out.println("JSON Fault" + JSONet);
+                    }
+                }
+                try {
+                    JSONObj.put("Data", Parts);
+                } catch (Exception JSONet) {
+                    System.out.println("JSON Fault" + JSONet);
+                }
+                if (JSONObj != null) {
+                    PrintWriter out = response.getWriter();
+                    out.print(JSONObj);
+                }
+            }
+
+        } else {
+            Object Data = request.getAttribute("Data");
+            JSONObject obj = ProcessObject(Data);
+            if (obj != null) {
+                PrintWriter out = response.getWriter();
+                out.print(obj);
+            }
+        }
+    }
+
     private JSONObject ProcessObject(Object Value) {
         JSONObject Record = new JSONObject();
 
@@ -100,10 +168,10 @@ public class RenderJson extends HttpServlet {
                     try {
                         rt = meth.invoke(Value);
                     } catch (Exception et) {
-                        System.out.println("Method "+Name);
+                        System.out.println("Method " + Name);
                         System.out.println("Cat't process this reflection invocation" + et);
-                        System.out.println("Cause "+et.getCause());
-                        
+                        System.out.println("Cause " + et.getCause());
+
                         continue;
                     }
                     Class cl = rt.getClass();

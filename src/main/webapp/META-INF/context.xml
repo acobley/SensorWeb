@@ -6,7 +6,11 @@
             name="jdbc/Sensordb" 
             password="dacjd156n." 
             type="javax.sql.DataSource" 
-            url="jdbc:mysql://some-mysql:3306/Sensordb" 
+            url="jdbc:mysql://localhost:3307/Sensordb" 
             username="root"/>
 
 </Context>
+
+<!--
+url="jdbc:mysql://some-mysql:3306/Sensordb" 
+-->

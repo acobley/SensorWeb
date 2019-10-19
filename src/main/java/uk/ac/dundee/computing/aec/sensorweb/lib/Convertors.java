@@ -13,6 +13,8 @@ import java.util.Date;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.TimeZone;
 
 public final class Convertors {
 
@@ -228,11 +230,30 @@ public final class Convertors {
             System.out.println("Can't convert date" + et);
             throw et;
         }
+        
+        TimeZone tz=cl.getTimeZone();
         Date dt = cl.getTime();
-        LocalDateTime date = DateToLocalDateTime(dt);
+       
+        LocalDateTime date = DateToLocalDateTime(dt,tz);
         return (date);
     }
 
+    public static TimeZone getTimeZone(String dd)throws ParseException {
+        Calendar cl = Calendar.getInstance();
+        SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM d HH:mm:ss zzz yyyy");
+        try {
+            cl.setTime(sdf.parse(dd));
+        } catch (ParseException et) {
+            //Try Mon Oct 7 13:04:36 BST 2019
+
+            System.out.println("Can't convert date" + et);
+            throw et;
+        }
+        
+        TimeZone tz=cl.getTimeZone();
+        return tz;
+    }
+    
     public static Instant LocalDateToInstant(LocalDate dt) {
         Instant i = dt.atStartOfDay(ZoneId.systemDefault()).toInstant();
         return i;
@@ -243,8 +264,8 @@ public final class Convertors {
         return (date);
     }
 
-    public static LocalDateTime DateToLocalDateTime(Date dt) {
-        LocalDateTime date = dt.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+    public static LocalDateTime DateToLocalDateTime(Date dt,TimeZone tz) {
+        LocalDateTime date = dt.toInstant().atZone(tz.toZoneId()).toLocalDateTime();
         return (date);
     }
 
