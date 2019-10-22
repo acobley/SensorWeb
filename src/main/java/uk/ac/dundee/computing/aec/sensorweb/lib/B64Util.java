@@ -11,6 +11,7 @@ import com.eclipsesource.json.JsonValue;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Base64;
+
 import java.util.TimeZone;
 import static uk.ac.dundee.computing.aec.sensorweb.lib.Utils.Uint16;
 import static uk.ac.dundee.computing.aec.sensorweb.lib.Utils.Uint32;
@@ -22,7 +23,17 @@ import uk.ac.dundee.computing.aec.sensorweb.stores.B64Data;
  */
 public class B64Util {
     
-    public static byte[] Convert64(String B64) {
+    public static String RemovePadding(String B64){
+        
+        char lastChar = B64.charAt(B64.length() - 1);
+        while (lastChar =='='){
+            B64 = B64.substring(0, B64.length() - 1);
+            lastChar = B64.charAt(B64.length() - 1);
+        }
+        return B64;
+    }
+    
+    public static byte[] Convert64(String B64)  {
         JsonObject Record = null;
         try {
             Record = Json.parse(B64).asObject();
@@ -32,7 +43,7 @@ public class B64Util {
         }
 
         String B64History = Record.get("b64History").asString();
-
+        B64History=RemovePadding(B64History);
         byte[] nb = null;
         byte[] Decoded = null;
         try {
@@ -41,6 +52,15 @@ public class B64Util {
 
         } catch (Exception et) {
             System.out.println("Can't do Base64");
+           
+            try{
+                 Base64.Decoder dc= Base64.getDecoder();
+                
+                 Decoded= dc.decode(B64History.trim());
+            }catch (Exception et2){
+                return null;
+            }
+            
             return null;
         }
         return Decoded;
@@ -99,7 +119,17 @@ public class B64Util {
             return ttz;
         } catch (Exception et) {
             System.out.println("can't convert Start date String to date");
-            return null;
+            try{
+                dd = Convertors.AndroidStringToLocalDateTime(B64Date);
+                tz=  Convertors.getAndroidTimeZone(B64Date);
+            TimeWithTZ ttz=new TimeWithTZ(dd,tz);
+            return ttz;
+            }catch(Exception et2){
+                System.out.println("can't convert javascript Start date String to date");
+                return null;
+            }
+            
+           
         }
         
     }

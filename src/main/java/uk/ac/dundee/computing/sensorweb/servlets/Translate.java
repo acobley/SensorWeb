@@ -110,8 +110,8 @@ public class Translate extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        //String ip = "172.17.0.4";
-        String ip = "127.0.0.1";
+        String ip = "172.17.0.5";
+        //String ip = "127.0.0.1";
         long Millis = 1;
         String b64History = request.getParameter("b64History");
         String Name = request.getParameter("name");
@@ -144,6 +144,7 @@ public class Translate extends HttpServlet {
             double Soiltemperature = sd.fSoilTemp;
             double SoilVWC = sd.dsoilVWC;
             double Batterylevel = sd.dBatteryLevel;
+            double dLight=sd.dlight;
 
             JSONArray jsonSensors = new JSONArray();
             JSONObject Record = null;
@@ -166,6 +167,10 @@ public class Translate extends HttpServlet {
             Record = new JSONObject();
             Record.put("name", "Battery level");
             Record.put("fValue", Batterylevel);
+            jsonSensors.put(Record);
+              Record = new JSONObject();
+            Record.put("name", "Light Level");
+            Record.put("fValue", dLight);
             jsonSensors.put(Record);
             JSONObject jsonDevice = new JSONObject();
             jsonDevice.put("device", Name);

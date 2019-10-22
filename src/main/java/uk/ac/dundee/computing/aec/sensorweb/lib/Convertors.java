@@ -237,10 +237,45 @@ public final class Convertors {
         LocalDateTime date = DateToLocalDateTime(dt,tz);
         return (date);
     }
+    
+    public static LocalDateTime AndroidStringToLocalDateTime(String dd) throws ParseException {
+        Calendar cl = Calendar.getInstance();
+        SimpleDateFormat sdf = new SimpleDateFormat("YYYY-MM-dd'T'HH:mm:ss");
+        try {
+            cl.setTime(sdf.parse(dd));
+        } catch (ParseException et) {
+            //Try Mon Oct 7 13:04:36 BST 2019
+
+            System.out.println("Can't convert date" + et);
+            throw et;
+        }
+        
+        TimeZone tz=cl.getTimeZone();
+        Date dt = cl.getTime();
+       
+        LocalDateTime date = DateToLocalDateTime(dt,tz);
+        return (date);
+    }
 
     public static TimeZone getTimeZone(String dd)throws ParseException {
         Calendar cl = Calendar.getInstance();
         SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM d HH:mm:ss zzz yyyy");
+        try {
+            cl.setTime(sdf.parse(dd));
+        } catch (ParseException et) {
+            //Try Mon Oct 7 13:04:36 BST 2019
+
+            System.out.println("Can't convert date" + et);
+            throw et;
+        }
+        
+        TimeZone tz=cl.getTimeZone();
+        return tz;
+    }
+    
+    public static TimeZone getAndroidTimeZone(String dd)throws ParseException {
+        Calendar cl = Calendar.getInstance();
+        SimpleDateFormat sdf = new SimpleDateFormat("YYYY-MM-dd'T'HH:mm:ss");
         try {
             cl.setTime(sdf.parse(dd));
         } catch (ParseException et) {
