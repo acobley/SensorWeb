@@ -174,7 +174,11 @@ public class B64Util {
             if (dt.isBefore(StartDate)) {
                 break;
             }
+            
             int offset = HEADER_SIZE + (i * 12);
+            if (offset+12 > Decoded.length){ //This is a guard function
+                break;
+            }
             int airTemp = Uint16(Decoded[offset], Decoded[offset + 1]);
             int light = Uint16(Decoded[offset + 0x2], Decoded[offset + 0x2 + 1]);
             int soilEC = Uint16(Decoded[offset + 0x4], Decoded[offset + 0x4 + 1]);

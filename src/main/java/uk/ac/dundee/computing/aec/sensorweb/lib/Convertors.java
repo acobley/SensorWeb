@@ -240,7 +240,7 @@ public final class Convertors {
     
     public static LocalDateTime AndroidStringToLocalDateTime(String dd) throws ParseException {
         Calendar cl = Calendar.getInstance();
-        SimpleDateFormat sdf = new SimpleDateFormat("YYYY-MM-dd'T'HH:mm:ss");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
         try {
             cl.setTime(sdf.parse(dd));
         } catch (ParseException et) {

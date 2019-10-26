@@ -110,8 +110,8 @@ public class Translate extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String ip = "172.17.0.5";
-        //String ip = "127.0.0.1";
+        //String ip = "172.17.0.5";
+        String ip = "127.0.0.1";
         long Millis = 1;
         String b64History = request.getParameter("b64History");
         String Name = request.getParameter("name");
@@ -205,6 +205,7 @@ public class Translate extends HttpServlet {
                     PrintWriter out = new PrintWriter(os);
                     out.print(json);
                     out.print("\r\n");
+                    System.out.println(json);
                     out.close();
                     sc.close();
                     sent = true;

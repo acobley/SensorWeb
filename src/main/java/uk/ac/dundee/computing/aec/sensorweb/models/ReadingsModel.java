@@ -5,7 +5,7 @@
  */
 package uk.ac.dundee.computing.aec.sensorweb.models;
 
-import com.datastax.oss.driver.api.core.cql.Row;
+
 import com.eclipsesource.json.Json;
 import com.eclipsesource.json.JsonObject;
 import com.eclipsesource.json.JsonValue;
@@ -16,7 +16,7 @@ import java.sql.ResultSet;
 import java.util.Date;
 import javax.sql.DataSource;
 import uk.ac.dundee.computing.aec.sensorweb.lib.Convertors;
-import uk.ac.dundee.computing.aec.sensorweb.stores.DeviceStore;
+
 
 /**
  *
