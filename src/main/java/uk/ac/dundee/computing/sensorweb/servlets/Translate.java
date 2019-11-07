@@ -5,6 +5,9 @@
  */
 package uk.ac.dundee.computing.sensorweb.servlets;
 
+import com.eclipsesource.json.Json;
+import com.eclipsesource.json.JsonObject;
+import com.eclipsesource.json.JsonValue;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
@@ -35,6 +38,7 @@ import uk.ac.dundee.computing.aec.sensorweb.lib.Dbutils;
 import uk.ac.dundee.computing.aec.sensorweb.lib.Utils;
 import uk.ac.dundee.computing.aec.sensorweb.lib.Web;
 import uk.ac.dundee.computing.aec.sensorweb.models.ReadingsModel;
+import uk.ac.dundee.computing.aec.sensorweb.models.WriteToKafka;
 import uk.ac.dundee.computing.aec.sensorweb.stores.B64Data;
 import uk.ac.dundee.computing.aec.sensorweb.stores.Sensordata;
 
@@ -59,12 +63,16 @@ public class Translate extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     private DataSource _ds = null;
+    private WriteToKafka kf = null;
 
     public void init(ServletConfig config) throws ServletException {
         // TODO Auto-generated method stub
         Dbutils db = new Dbutils();
 
         _ds = db.assemble(config);
+
+        kf = new WriteToKafka();
+
     }
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
@@ -83,7 +91,13 @@ public class Translate extends HttpServlet {
             out.println("</html>");
         }
     }
-
+    private void  AddRecord(String name, double value, JSONArray jsonSensors){
+            JSONObject Record = null;
+            Record = new JSONObject();
+            Record.put("name", name);
+            Record.put("fValue", value);
+            jsonSensors.put(Record);
+    }
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
@@ -119,78 +133,74 @@ public class Translate extends HttpServlet {
         String Longitude = request.getParameter("longitude");
         String UserId = request.getParameter("UserId");
         String Meta = request.getParameter("Meta");
+        
+        
+        JsonObject jMeta = Json.parse(Meta).asObject();
+        JsonValue jSerial = jMeta.get("Serial");
+        String Serial=jSerial.asString();
+       
         System.out.println(Name);
         System.out.println(lat);
         System.out.println(Longitude);
         System.out.println(UserId);
-        System.out.println(Meta);   
+        System.out.println(Meta);
         ReadingsModel rd = new ReadingsModel();
         rd.StoreReading(Name, b64History, Meta, _ds);
         B64Data b64 = B64Util.HeaderB64(b64History);
 
         b64 = B64Util.PayloadB64(b64History, b64);
         ArrayList<Sensordata> sensorData = b64.getSensorData();
- 
+
         Iterator<Sensordata> iter
                 = sensorData.iterator();
 
         while (iter.hasNext()) {
             Sensordata sd = iter.next();
-            
+
             LocalDateTime dd = sd.ReadingTime;
-            TimeZone tz= sd.tz;
+            TimeZone tz = sd.tz;
             double Airtemperature = sd.fAirTemp;
             double SoilEC = sd.dsoilEC;
             double Soiltemperature = sd.fSoilTemp;
             double SoilVWC = sd.dsoilVWC;
             double Batterylevel = sd.dBatteryLevel;
-            double dLight=sd.dlight;
-
+            double dLight = sd.dlight;
+            
             JSONArray jsonSensors = new JSONArray();
-            JSONObject Record = null;
-            Record = new JSONObject();
-            Record.put("name", "Air temperature");
-            Record.put("fValue", Airtemperature);
-            jsonSensors.put(Record);
-            Record = new JSONObject();
-            Record.put("name", "Soil EC");
-            Record.put("fValue", SoilEC);
-            jsonSensors.put(Record);
-            Record = new JSONObject();
-            Record.put("name", "Soil temperature");
-            Record.put("fValue", Soiltemperature);
-            jsonSensors.put(Record);
-            Record = new JSONObject();
-            Record.put("name", "Soil VWC");
-            Record.put("fValue", SoilVWC);
-            jsonSensors.put(Record);
-            Record = new JSONObject();
-            Record.put("name", "Battery level");
-            Record.put("fValue", Batterylevel);
-            jsonSensors.put(Record);
-              Record = new JSONObject();
-            Record.put("name", "Light Level");
-            Record.put("fValue", dLight);
-            jsonSensors.put(Record);
+            AddRecord("Air temperature", Airtemperature,jsonSensors);
+            AddRecord("Soil EC",SoilEC,jsonSensors);
+            AddRecord("Soil temperature",Soiltemperature,jsonSensors);
+            AddRecord("Soil VWC",SoilVWC,jsonSensors);
+            AddRecord("Battery level",Batterylevel,jsonSensors);
+            AddRecord("Light Level",dLight,jsonSensors);
+            AddRecord("Raw Air temperature",sd.airTemp,jsonSensors);
+            AddRecord("Raw Soil EC",sd.soilEC,jsonSensors);
+            AddRecord("Raw Soil temperature",sd.soilTemp,jsonSensors);
+            AddRecord("Raw Soil VWC",sd.soilVWC,jsonSensors);
+            AddRecord("Raw Battery level",sd.batteryLevel,jsonSensors);
+            AddRecord("Raw Light Level",sd.light,jsonSensors);
+            
             JSONObject jsonDevice = new JSONObject();
-            jsonDevice.put("device", Name);
+            jsonDevice.put("Name", Name);
+            
             DateTimeFormatter sdf = DateTimeFormatter
                     .ofPattern("EEE MMM d HH:mm:ss zzz yyyy");
-            
-            try{
-                
-                String sDate=sdf.withZone(tz.toZoneId()).format(dd);
-                LocalDateTime formatDateTime = LocalDateTime.parse(sDate,sdf);
-               jsonDevice.put("insertion_time", sDate);
-            }catch( Exception et){
-                System.out.println("Can't format date for sending to Sensor " +et );
-                
+
+            try {
+
+                String sDate = sdf.withZone(tz.toZoneId()).format(dd);
+                LocalDateTime formatDateTime = LocalDateTime.parse(sDate, sdf);
+                jsonDevice.put("insertion_time", sDate);
+            } catch (Exception et) {
+                System.out.println("Can't format date for sending to Sensor " + et);
+
             }
-            jsonDevice.put("TimeZone",tz.getDisplayName());
+            jsonDevice.put("TimeZone", tz.getDisplayName());
             JSONObject jsonMeta = new JSONObject();
             jsonMeta.put("Latitude", lat);
             jsonMeta.put("Longitude", Longitude);
             jsonMeta.put("UserId", UserId);
+            jsonMeta.put("Serial",Serial);
             JSONObject json = new JSONObject();
             json.put("sensors", jsonSensors);
             json.put("SensorData", jsonDevice);
@@ -199,25 +209,11 @@ public class Translate extends HttpServlet {
             boolean sent = false;
             while (sent == false) {
                 try {
-                    sc = new Socket(ip, 19877);
-                    //sc = new Socket(ip, 80);
-                    OutputStream os = sc.getOutputStream();
-                    PrintWriter out = new PrintWriter(os);
-                    out.print(json);
-                    out.print("\r\n");
-                    System.out.println(json);
-                    out.close();
-                    sc.close();
-                    sent = true;
-                    // System.out.println(json);
+                    kf.sendMessage(json.toString());
                 } catch (Exception et) {
-                    System.out.println("No Host " + Name + " : " + ip);
-                    try {
-                        Thread.sleep((long) 1000);
-                    } catch (Exception et1) {
-                        System.out.println("Cant sleep " + et);
-                    }
+                    System.out.println("Can't send to kafka");
                 }
+                sent=true;
             }
             try {
                 //System.out.println("Sleeping");
@@ -228,7 +224,7 @@ public class Translate extends HttpServlet {
             }
 
         }
-       
+
         rd.StoreLastEntryIndex(Name, b64.getLastIndex(), _ds);
         request.setAttribute("Data", sensorData);
         RequestDispatcher rdjson = request.getRequestDispatcher("/RenderJson");
