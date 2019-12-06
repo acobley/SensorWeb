@@ -137,6 +137,9 @@ public class Translate extends HttpServlet {
         
         JsonObject jMeta = Json.parse(Meta).asObject();
         JsonValue jSerial = jMeta.get("Serial");
+        if (jSerial == null){
+            jSerial = jMeta.get("SerialNumber");
+        }
         String Serial=jSerial.asString();
        
         System.out.println(Name);
