@@ -85,6 +85,15 @@ public class Dbutils {
 		} catch (Exception et) {
 			return;
 		}
+                
+                String sqlAlter="Alter table `Readings` Add `MetaString` TEXT ";
+                try {
+			pmst = Conn.prepareStatement(sqlAlter);
+			pmst.executeUpdate();
+		} catch (Exception ex) {
+			System.out.println("Can not Alter table "+ex);
+			return;
+		}
 		String sqlQuery = "CREATE TABLE IF NOT EXISTS `Readings` ("
 				+ "`idReading` INT NOT NULL AUTO_INCREMENT," 
                                 + "`name` VARCHAR(45) NULL,"
@@ -97,6 +106,7 @@ public class Dbutils {
                                 + "`FlowerPowercurrenttime` INT NULL,"
                                 + "`MobileTime` DateTime NULL,"
                                 + "`B64History` TEXT NULL,"
+                                + "`MetaString` TEXT NULL,"
 				+ "PRIMARY KEY (`idReading`))" + "ENGINE = InnoDB;";
 		try {
 			pmst = Conn.prepareStatement(sqlQuery);

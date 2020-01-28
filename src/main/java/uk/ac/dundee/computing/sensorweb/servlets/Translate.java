@@ -32,6 +32,7 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.TimeZone;
 import javax.servlet.RequestDispatcher;
+import org.json.JSONException;
 import uk.ac.dundee.computing.aec.sensorweb.lib.B64Util;
 import uk.ac.dundee.computing.aec.sensorweb.lib.Convertors;
 import uk.ac.dundee.computing.aec.sensorweb.lib.Dbutils;
@@ -91,12 +92,17 @@ public class Translate extends HttpServlet {
             out.println("</html>");
         }
     }
-    private void  AddRecord(String name, double value, JSONArray jsonSensors){
+    private void  AddRecord(String name, double value, JSONArray jsonSensors) throws JSONException {
             JSONObject Record = null;
             Record = new JSONObject();
+            try{
             Record.put("name", name);
             Record.put("fValue", value);
             jsonSensors.put(Record);
+            }catch(JSONException et){
+                System.out.println("Translate can't add record" +name+"  "+value+"   "+et);
+                throw (et);
+            }
     }
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
@@ -133,7 +139,8 @@ public class Translate extends HttpServlet {
         String Longitude = request.getParameter("longitude");
         String UserId = request.getParameter("UserId");
         String Meta = request.getParameter("Meta");
-        
+        ReadingsModel rd = new ReadingsModel();
+        rd.StoreReading(Name, b64History, Meta, _ds,request);
         
         JsonObject jMeta = Json.parse(Meta).asObject();
         JsonValue jSerial = jMeta.get("Serial");
@@ -147,8 +154,8 @@ public class Translate extends HttpServlet {
         System.out.println(Longitude);
         System.out.println(UserId);
         System.out.println(Meta);
-        ReadingsModel rd = new ReadingsModel();
-        rd.StoreReading(Name, b64History, Meta, _ds);
+        
+        
         B64Data b64 = B64Util.HeaderB64(b64History);
 
         b64 = B64Util.PayloadB64(b64History, b64);

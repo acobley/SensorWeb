@@ -14,6 +14,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.Date;
+import javax.servlet.http.HttpServletRequest;
 import javax.sql.DataSource;
 import uk.ac.dundee.computing.aec.sensorweb.lib.Convertors;
 
@@ -26,7 +27,7 @@ public class ReadingsModel {
 
     private DataSource _ds = null;
 
-    public int StoreReading(String Name, String B64History, String Meta, DataSource _ds) {
+    public int StoreReading(String Name, String B64History, String Meta, DataSource _ds,HttpServletRequest request) {
         this._ds = _ds;
         PreparedStatement pmst = null;
         Connection Conn;
@@ -35,7 +36,13 @@ public class ReadingsModel {
         } catch (Exception et) {
             return -1;
         }
-        JsonObject jMeta = Json.parse(Meta).asObject();
+        String MetaString = request.getParameter("Meta");
+        JsonObject jMeta=null;
+        try{
+         jMeta= Json.parse(Meta).asObject();
+        }catch (Exception et) {
+                  jMeta = new JsonObject();
+            }
         JsonValue jNb = jMeta.get("Nbentries");
         JsonValue jLastEntryIndex = jMeta.get("LastentryIndex");
         JsonValue jTransferStartIndex = jMeta.get("TransferStartIndex");
@@ -47,29 +54,67 @@ public class ReadingsModel {
         String sqlQuery = "INSERT INTO `Readings` "
                 + "(`name`,`LastEntryIndex`,`Nbentries`,`TransferStartIndex`,`CurrentSessionId`,"
                 + "`CurrentSessionStartIndex`,`CurrentSessionPeriod`,`FlowerPowercurrenttime`,`MobileTime`,"
-                + " `B64History`) "
-                + "VALUES (?,?,?,?,?,?,?,?,?,?);";
+                + " `B64History`,`MetaString`) "
+                + "VALUES (?,?,?,?,?,?,?,?,?,?,?);";
         try {
             pmst = Conn.prepareStatement(sqlQuery);
+            try{
             pmst.setString(1, Name);
+            }catch (Exception et) {
+                 pmst.setString(1,"NoName");
+            }
+            try {
             pmst.setInt(2, jLastEntryIndex.asInt());
+            }catch (Exception et) {
+                 pmst.setInt(2, -1);
+            }
+            try{
             pmst.setInt(3, jNb.asInt());
+            }catch (Exception et) {
+                  pmst.setInt(3, -1);
+            }
+            try{
             pmst.setInt(4, jTransferStartIndex.asInt());
+            }catch (Exception et) {
+                  pmst.setInt(4, -1);
+            }
+            try {
             pmst.setInt(5, jCurrentSessionID.asInt());
+            }catch (Exception et) {
+                  pmst.setInt(5, -1);
+            }
+            try{
             pmst.setInt(6, jCurrentSessionStartIndex.asInt());
+            }catch (Exception et) {
+                  pmst.setInt(6, -1);
+            }
+            try{
             pmst.setInt(7, jCurrentSessionPeriod.asInt());
+            }catch (Exception et) {
+                  pmst.setInt(7, -1);
+            }
+            try{
             pmst.setInt(8, jFlowerPowercurenttime.asInt());
+            }catch (Exception et) {
+                  pmst.setInt(8, -1);
+            }
             Date dDate = null;
 
             try {
                 dDate = Convertors.StringToDate(jMobileTime.asString());
 
             } catch (Exception et) {
-                System.out.println("Can't parse Python Date " + et);
+                System.out.println("mySQl save Can't parse Date " + et);
             }
+            try {
             pmst.setDate(9, new java.sql.Date(dDate.getTime()));
+            }catch (Exception et) {
+                  pmst.setDate(9, null);
+            }
             int len = B64History.length();
             pmst.setString(10, B64History);
+            pmst.setString(11,MetaString);
+            
             pmst.executeUpdate();
         } catch (Exception ex) {
             System.out.println("Can not insert data into Readings " + ex);

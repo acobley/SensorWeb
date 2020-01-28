@@ -198,8 +198,17 @@ public final class Convertors {
         try {
             cl.setTime(sdf.parse(dd));
         } catch (ParseException et) {
-            System.out.println("Can't convert date" + et);
-            throw et;
+            System.out.println("Can't convert date in StringtoDate, trying android format" + et);
+            sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+            try {
+                cl.setTime(sdf.parse(dd));
+            } catch (ParseException et2) {
+                //Try Mon Oct 7 13:04:36 BST 2019
+
+                System.out.println("Can't convert date in StringToDate after trying Android" + et2);
+                throw et;
+            }
+            
         }
         Date dt = cl.getTime();
         return (dt);
