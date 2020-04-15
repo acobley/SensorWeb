@@ -14,7 +14,10 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.*;
 import java.lang.reflect.*;
 import java.io.PrintWriter;
+import java.time.LocalDateTime;
 import javax.servlet.annotation.WebServlet;
+import uk.ac.dundee.computing.aec.sensorweb.lib.Utils;
+import uk.ac.dundee.computing.aec.sensorweb.stores.FileNameStore;
 
 /**
  * Servlet implementation class RenderJson
@@ -40,6 +43,9 @@ public class RenderJson extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         // TODO Auto-generated method stub
         Object temp = request.getAttribute("Data");
+        FileNameStore fs = (FileNameStore)request.getAttribute("FileName");
+        LocalDateTime dd=fs.getDd();
+        String Name=(String)fs.getName();
         Class c = temp.getClass();
         String className = c.getName();
         if (className.compareTo("java.util.LinkedList") == 0) { //Deal with a linked list
@@ -63,7 +69,9 @@ public class RenderJson extends HttpServlet {
                 System.out.println("JSON Fault" + JSONet);
             }
             if (JSONObj != null) {
+                Utils.WriteJSONLog(Name, dd, JSONObj.toString(4));
                 PrintWriter out = response.getWriter();
+                System.out.println("JSON "+JSONObj);
                 out.print(JSONObj);
             }
 
@@ -71,7 +79,9 @@ public class RenderJson extends HttpServlet {
             Object Data = request.getAttribute("Data");
             JSONObject obj = ProcessObject(Data);
             if (obj != null) {
+                Utils.WriteJSONLog(Name, dd, obj.toString(4));
                 PrintWriter out = response.getWriter();
+                System.out.println("JSON "+obj);
                 out.print(obj);
             }
         }
@@ -80,6 +90,9 @@ public class RenderJson extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         // TODO Auto-generated method stub
         Object temp = request.getAttribute("Data");
+        FileNameStore fs = (FileNameStore)request.getAttribute("FileName");
+        LocalDateTime dd=fs.getDd();
+        String Name=(String)fs.getName();
         Class c = temp.getClass();
         String className = c.getName();
         if ((className.compareTo("java.util.LinkedList") == 0) || (className.compareTo("java.util.ArrayList") == 0)) { //Deal with a linked list
@@ -105,7 +118,9 @@ public class RenderJson extends HttpServlet {
                     System.out.println("JSON Fault" + JSONet);
                 }
                 if (JSONObj != null) {
+                    Utils.WriteJSONLog(Name, dd, JSONObj.toString(4));
                     PrintWriter out = response.getWriter();
+                    System.out.println(JSONObj);
                     out.print(JSONObj);
                 }
             }
@@ -130,7 +145,9 @@ public class RenderJson extends HttpServlet {
                     System.out.println("JSON Fault" + JSONet);
                 }
                 if (JSONObj != null) {
+                    Utils.WriteJSONLog(Name, dd, JSONObj.toString(4));
                     PrintWriter out = response.getWriter();
+                    System.out.println(JSONObj);
                     out.print(JSONObj);
                 }
             }
@@ -139,7 +156,9 @@ public class RenderJson extends HttpServlet {
             Object Data = request.getAttribute("Data");
             JSONObject obj = ProcessObject(Data);
             if (obj != null) {
+                Utils.WriteJSONLog(Name, dd, obj.toString(4));
                 PrintWriter out = response.getWriter();
+                System.out.println(obj);
                 out.print(obj);
             }
         }
@@ -181,8 +200,9 @@ public class RenderJson extends HttpServlet {
                         try {
                             Record.put(Name, rt);
                         } catch (Exception JSONet) {
-                            System.out.println("JSON Fault" + JSONet);
-                            return null;
+                            System.out.println("Warning JSON Fault rt out of range " + JSONet);
+                            Record.put(Name,Double.MAX_VALUE);
+                
                         }
 
                     }

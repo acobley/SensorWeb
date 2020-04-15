@@ -124,6 +124,7 @@ public class ReadingsModel {
     }
 
     public int StoreLastEntryIndex(String Name, long LastEntryIndex, DataSource _ds) {
+        System.out.println("Saving last index "+LastEntryIndex);
         this._ds = _ds;
         PreparedStatement pmst = null;
         Connection Conn;

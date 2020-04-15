@@ -19,9 +19,9 @@ public class B64Data {
     public int nbEntries;
     long LastIndextime;
       long FirstIndex;
-      long LastIndex;
+      public long LastIndex;
        long SessionId;
-       long Period;
+       public long Period;
        ArrayList<Sensordata> sensorData;
        
    

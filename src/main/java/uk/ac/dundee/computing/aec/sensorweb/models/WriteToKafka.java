@@ -14,8 +14,8 @@ import java.util.Properties;
  */
 public class WriteToKafka {
     private final static String TOPIC = "GrowData";
-    private final static String BOOTSTRAP_SERVERS =
-            "localhost:9092";
+    //private final static String BOOTSTRAP_SERVERS ="localhost:9092";
+    private final static String BOOTSTRAP_SERVERS ="kafka-server:9092";
     
     private static Producer<Long, String> createProducer() {
         Properties props = new Properties();

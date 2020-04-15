@@ -86,14 +86,7 @@ public class Dbutils {
 			return;
 		}
                 
-                String sqlAlter="Alter table `Readings` Add `MetaString` TEXT ";
-                try {
-			pmst = Conn.prepareStatement(sqlAlter);
-			pmst.executeUpdate();
-		} catch (Exception ex) {
-			System.out.println("Can not Alter table "+ex);
-			return;
-		}
+                
 		String sqlQuery = "CREATE TABLE IF NOT EXISTS `Readings` ("
 				+ "`idReading` INT NOT NULL AUTO_INCREMENT," 
                                 + "`name` VARCHAR(45) NULL,"
@@ -128,6 +121,35 @@ public class Dbutils {
 			System.out.println("Can not create table "+ex);
 			return;
 		}
+                
+                String sqlAlter="Alter table `Readings` Add `MetaString` MEDIUMTEXT ";
+                try {
+			pmst = Conn.prepareStatement(sqlAlter);
+			pmst.executeUpdate();
+                        System.out.println("Added metaString mediumtext");
+		} catch (Exception ex) {
+			System.out.println("Can not Alter  add MetaString table "+ex);
+			
+		}
+                sqlAlter="Alter table `Readings` Modify `MetaString` MEDIUMTEXT ";
+                try {
+			pmst = Conn.prepareStatement(sqlAlter);
+			pmst.executeUpdate();
+                        System.out.println("changed metaString mediumtext");
+		} catch (Exception ex) {
+			System.out.println("Can not Alter  add MetaString table "+ex);
+			return;
+		}
+                sqlAlter="Alter table `Readings` Modify `B64History` MEDIUMTEXT ";
+                try {
+			pmst = Conn.prepareStatement(sqlAlter);
+			pmst.executeUpdate();
+                        System.out.println("changed b64 history mediumtext");
+		} catch (Exception ex) {
+			System.out.println("Can not Alter  add B64History table "+ex);
+			
+		}
+                
          }
 	// create the schema if it doesn't exist
 	private void CreateSchema(DataSource _ds) {

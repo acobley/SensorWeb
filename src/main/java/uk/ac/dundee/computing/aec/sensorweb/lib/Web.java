@@ -16,6 +16,7 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import com.eclipsesource.json.JsonObject;
+import java.util.List;
 
 /**
  *
@@ -27,6 +28,9 @@ public final class Web {
 
     }
 
+     
+    
+    
     public static void PostJson(String url, String Data) throws IOException {
         URL videos = null;
         try {
@@ -49,9 +53,10 @@ public final class Web {
             hc.setDoOutput(true);
             //hc.setRequestProperty("Accept-Encoding", "gzip, deflate, sdch");
             hc.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+            //hc.setRequestProperty("Content-Type", "text/plain");
             //hc.setRequestProperty("Accept", "application/json");
             hc.setRequestProperty("Accept", "application/json,text/html,application/hal+json,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*");
-            hc.setRequestProperty("charset", "utf-8");
+            //hc.setRequestProperty("charset", "utf-8");
             hc.setRequestProperty("Content-Length", Integer.toString(Data.length()));
 
         } catch (Exception et) {

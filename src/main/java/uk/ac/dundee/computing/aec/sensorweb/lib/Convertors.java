@@ -185,7 +185,7 @@ public final class Convertors {
         try {
             cl.setTime(sdf.parse(dd));
         } catch (ParseException et) {
-            System.out.println("Can't convert date" + et);
+            System.out.println("Fatal: Can't convert date (JavaScriptStringToDate)" + et);
             throw et;
         }
         Date dt = cl.getTime();
@@ -198,14 +198,14 @@ public final class Convertors {
         try {
             cl.setTime(sdf.parse(dd));
         } catch (ParseException et) {
-            System.out.println("Can't convert date in StringtoDate, trying android format" + et);
+            System.out.println("Warning: Can't convert date in StringtoDate, trying android format" + et);
             sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
             try {
                 cl.setTime(sdf.parse(dd));
             } catch (ParseException et2) {
                 //Try Mon Oct 7 13:04:36 BST 2019
 
-                System.out.println("Can't convert date in StringToDate after trying Android" + et2);
+                System.out.println("Fatal: Can't convert date in StringToDate after trying Android" + et2);
                 throw et;
             }
             
@@ -220,7 +220,7 @@ public final class Convertors {
         try {
             cl.setTime(sdf.parse(dd));
         } catch (ParseException et) {
-            System.out.println("Can't convert date" + et);
+            System.out.println("Fatal: Can't convert date (StringToLocalDate)" + et);
             throw et;
         }
         Date dt = cl.getTime();
@@ -236,7 +236,7 @@ public final class Convertors {
         } catch (ParseException et) {
             //Try Mon Oct 7 13:04:36 BST 2019
 
-            System.out.println("Can't convert date" + et);
+            System.out.println("Fatal: Can't convert date:(StringToLocalDateTime)" + et);
             throw et;
         }
         
@@ -255,7 +255,7 @@ public final class Convertors {
         } catch (ParseException et) {
             //Try Mon Oct 7 13:04:36 BST 2019
 
-            System.out.println("Can't convert date" + et);
+            System.out.println("Fatal: Can't convert date (AndroidStringToLocalDateTime)" + et);
             throw et;
         }
         
@@ -274,7 +274,7 @@ public final class Convertors {
         } catch (ParseException et) {
             //Try Mon Oct 7 13:04:36 BST 2019
 
-            System.out.println("Can't convert date" + et);
+            System.out.println("Fatal Can't convert date in getTimeZone" + et);
             throw et;
         }
         
@@ -290,7 +290,7 @@ public final class Convertors {
         } catch (ParseException et) {
             //Try Mon Oct 7 13:04:36 BST 2019
 
-            System.out.println("Can't convert date" + et);
+            System.out.println("Fatal: Can't get AndroidTime Zone (getAndroidTimeZone)" + et);
             throw et;
         }
         
