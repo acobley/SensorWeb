@@ -172,7 +172,7 @@ public class ReadingsModel {
             LastIndex = rs.getLong("LastEntryIndex");
             }
         } catch (Exception ex) {
-            System.out.println("Can not insert data into LastEntryIndex " + ex);
+            System.out.println("Can not get data from LastEntryIndex " + ex);
             return 0;
         }
         return LastIndex;

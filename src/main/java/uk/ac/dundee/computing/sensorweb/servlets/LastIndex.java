@@ -7,6 +7,7 @@ package uk.ac.dundee.computing.sensorweb.servlets;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.time.LocalDateTime;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -19,6 +20,7 @@ import javax.sql.DataSource;
 import uk.ac.dundee.computing.aec.sensorweb.lib.Convertors;
 import uk.ac.dundee.computing.aec.sensorweb.lib.Dbutils;
 import uk.ac.dundee.computing.aec.sensorweb.models.ReadingsModel;
+import uk.ac.dundee.computing.aec.sensorweb.stores.FileNameStore;
 
 /**
  *
@@ -72,8 +74,11 @@ public class LastIndex extends HttpServlet {
        String Name=args[2];
        ReadingsModel rd = new ReadingsModel();
        long LastIndex=rd.getLastIndex(Name,_ds);
+       System.out.println("Last index retrived "+LastIndex);
        LastIndexRecord ltr=new LastIndexRecord(Name,LastIndex);
+       FileNameStore fs= new FileNameStore("LastIndex"+Name, LocalDateTime.now());
        request.setAttribute("Data", ltr);
+        request.setAttribute("FileName",fs);
         RequestDispatcher rdjson = request.getRequestDispatcher("/RenderJson");
         rdjson.forward(request, response);
        
