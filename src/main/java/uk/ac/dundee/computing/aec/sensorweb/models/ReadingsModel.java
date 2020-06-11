@@ -159,6 +159,7 @@ public class ReadingsModel {
         try {
             Conn = _ds.getConnection();
         } catch (Exception et) {
+            System.out.println("Can not get conenction in getlastIndex");
             return -1;
         }
         String sqlQuery = "select * from LastEntryIndex where name=? ;";

@@ -65,7 +65,7 @@ public final class Utils {
                 writer.close();
 
             } catch (Exception et) {
-                System.out.println("Can't write log file");
+                System.out.println("Can't write log file "+et);
                 logwritable = false;
             }
         }

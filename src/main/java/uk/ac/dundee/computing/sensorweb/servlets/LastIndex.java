@@ -75,6 +75,7 @@ public class LastIndex extends HttpServlet {
        ReadingsModel rd = new ReadingsModel();
        long LastIndex=rd.getLastIndex(Name,_ds);
        System.out.println("Last index retrived "+LastIndex);
+       System.out.flush();
        LastIndexRecord ltr=new LastIndexRecord(Name,LastIndex);
        FileNameStore fs= new FileNameStore("LastIndex"+Name, LocalDateTime.now());
        request.setAttribute("Data", ltr);
